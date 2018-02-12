@@ -1,0 +1,76 @@
+### Kubernetes Deployment Manifest
+apiVersion:  extensions/v1beta1
+kind: Deployment
+metadata:
+  name: jira
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jira
+    spec:
+      containers:
+        - image: gcr.io/atlassian-kubernetes/jira:latest
+          name: jira_app
+          env:
+            - name: JIRA_DB_HOST
+              value: 127.0.0.1:3306
+            - name: JIRA_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: password
+            - name: JIRA_SQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: username
+          ports:
+            - containerPort: 8080
+              name: jira_app
+        metadata:
+          labels:
+            app: conf_app
+        spec:
+          containers:
+            - image: gcr.io/atlassian-kubernetes/conf:latest
+              name: conf_app
+              env:
+                - name: CONF_DB_HOST
+                  value: 127.0.0.1:3306
+                - name: CONF_DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudsql-db-credentials
+                      key: password
+                - name: CONF_SQL_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: cloudsql-db-credentials
+                      key: username
+              ports:
+                - containerPort: 8080
+                  name: conf_app
+        - image: gcr.io/cloudsql-docker/gce-proxy:1.10
+          name: cloudsql-proxy
+          command: ["/cloud_sql_proxy", "--dir=/cloudsql",
+                    "-instances=atlassian-kubernetes:australia-southeast1:cloudsql01=tcp:3306",
+                    "-credential_file=/secrets/cloudsql/credentials.json"]
+          volumeMounts:
+            - name: cloudsql-instance-credentials
+              mountPath: /secrets/cloudsql
+              readOnly: true
+            - name: ssl-certs
+              mountPath: /etc/ssl/certs
+            - name: cloudsql
+              mountPath: /cloudsql
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
+        - name: ssl-certs
+          hostPath:
+            path: /etc/ssl/certs
+        - name: cloudsql
+          emptyDir:
