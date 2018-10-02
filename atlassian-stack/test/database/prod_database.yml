@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: production
+  name: postgres-atlas
+  labels:
+    service: postgres-atlas
+    app: postgres-atlas
+
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-atlas
+  template:
+    metadata:
+      labels:
+        app: postgres-atlas
+    spec:
+      containers:
+        - name: postgres-atlas
+          image: mbern/postgres-atlas-all
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: "/var/lib/postgresql/data/"
+              name: nfs
+      volumes:
+        - name: nfs
+          persistentVolumeClaim:
+            claimName: nfsprodsql

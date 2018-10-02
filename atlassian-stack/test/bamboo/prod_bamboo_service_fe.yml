@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bamboo
+  namespace: production
+  labels:
+    app: bamboo
+spec:
+  type: LoadBalancer
+  externalIPs:
+    - 172.16.156.128
+  ports:
+  - name: http
+    port: 8085
+    targetPort: 8085
+    protocol: TCP
+  selector:
+    app: bamboo
