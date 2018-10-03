@@ -29,7 +29,7 @@ spec:
           ports:
             - containerPort: 8095
           volumeMounts:
-          - mountPath: "/var/atlassian/application-data/confluence"
+          - mountPath: "/var/atlassian/application-data/crowd"
             name: nfs
       volumes:
       - name: nfs
