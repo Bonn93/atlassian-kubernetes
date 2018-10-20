@@ -10,4 +10,4 @@ spec:
   - ReadWriteMany
   nfs:
     server: 172.22.48.39
-    path: "/nfsdata/prod_bitbucket"
+    path: "/nfsdata/prod_confluence"
