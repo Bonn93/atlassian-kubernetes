@@ -6,8 +6,7 @@ This repo is to show a general idea on how to deploy the entire Atlassian stack 
 Future releases will be via Helm Charts, Support for DataCenter Versions will come later.
 
 This is not a Production Ready Service. You will need to build your own deployments and use the correct resources.
-* NFSv4 is not supported for Shared File Systems on Atlassian Applications especially Git
-* NFS is not supported for Jira/Lucene Indexes
+* NFSv4 can be problematic, with correct tuning for each workload, this can be a viable option, though NFSv3 is recommended still
 
 ### Getting Started ###
 You will need:
