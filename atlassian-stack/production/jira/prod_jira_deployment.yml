@@ -23,9 +23,15 @@ spec:
           imagePullPolicy: Always
           env:
             - name: JVM_MINIMUM_MEMORY
-              value: 1024m
+              value: 1536m
             - name: JVM_MAXIMUM_MEMORY
-              value: 1024m
+              value: 1536m
+            - name: CATALINA_CONNECTOR_PROXYNAME
+              value: jira.pandanet.xyz
+            - name: CATALINA_CONNECTOR_SCHEME
+              value: https
+            - name: CATALINA_CONNECTOR_SECURE
+              value: "true"
           ports:
             - containerPort: 8080
           volumeMounts:

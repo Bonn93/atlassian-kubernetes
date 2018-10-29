@@ -9,5 +9,5 @@ spec:
   accessModes:
   - ReadWriteMany
   nfs:
-    server: 172.22.48.39
-    path: "/nfsdata/prod_confluence"
+    server: 10.1.1.22
+    path: "/root/nfs/confluence_prod"
