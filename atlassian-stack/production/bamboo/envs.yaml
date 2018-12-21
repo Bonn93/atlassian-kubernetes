@@ -1,0 +1,14 @@
+namespace: test
+bambooservicename: bamboo
+appname: bamboo
+jvmlow: 1536m
+jvmhigh: 1536m
+bamboovolume: bamboopv
+bamboovolumeclaim: bamboonfspvc
+bamboovolumename: bamboo
+storagesize: 5Gi
+nfsserverip: 10.1.1.22
+nfspath: /data/bamboo-prod/
+bambook8sservicename: bamboo-svc
+nodeip1: 10.1.1.24
+nodeip2: 10.1.1.25

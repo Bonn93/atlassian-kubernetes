@@ -1,21 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bamboo-deployment
-  namespace: production
+  name: bamboodeployment
+  namespace: {{namespace}}
   labels:
-    service: bamboo
-    app: bamboo
-
+    service: {{bambooservicename}}
+    app: {{appname}}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bamboo
+      app: {{appname}}
   template:
     metadata:
       labels:
-        app: bamboo
+        app: {{appname}}
     spec:
       containers:
         - name: bamboo
@@ -23,15 +22,15 @@ spec:
           imagePullPolicy: Always
           env:
             - name: JVM_MINIMUM_MEMORY
-              value: 1536m
+              value: {{jvmlow}}
             - name: JVM_MAXIMUM_MEMORY
-              value: 1536m
+              value: {{jvmhigh}}
           ports:
             - containerPort: 8085
           volumeMounts:
           - mountPath: "/var/atlassian/application-data/bamboo"
-            name: nfs
+            name: {{bamboovolume}}
       volumes:
-      - name: nfs
+      - name: {{bamboovolume}}
         persistentVolumeClaim:
-          claimName: nfsprodbamboo
+          claimName: {{bamboovolumeclaim}}
