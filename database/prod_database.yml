@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: production
-  name: postgres-atlas
+  name: postgres-atlas-deployment
   labels:
     service: postgres-atlas
     app: postgres-atlas

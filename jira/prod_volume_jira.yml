@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: {{namespace}}
+  name: {{volume}}
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+  - ReadWriteMany
+  nfs:
+    server: {{nfsipaddress}}
+    path: {{nfspath}}
+    #server: 10.1.1.22
+    #path: "/root/nfs/jira_prod"

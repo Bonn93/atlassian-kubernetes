@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jira-deployment
-  namespace: production
+  namespace: {{ namespace }}
   labels:
     service: jira
     app: jira
@@ -23,21 +23,26 @@ spec:
           imagePullPolicy: Always
           env:
             - name: JVM_MINIMUM_MEMORY
-              value: 1536m
+              value: {{xms}}
+              # 1536m
             - name: JVM_MAXIMUM_MEMORY
-              value: 1536m
+              value: {{xmx}}
+              # 1536m
             - name: CATALINA_CONNECTOR_PROXYNAME
-              value: jira.pandanet.xyz
+              value: {{proxyname}}
+              # jira.company.com
             - name: CATALINA_CONNECTOR_SCHEME
-              value: https
+              value: {{httpscheme}}
+              # https
             - name: CATALINA_CONNECTOR_SECURE
-              value: "true"
+              value: {{secureconnector}}
+              # Value = "true
           ports:
             - containerPort: 8080
           volumeMounts:
           - mountPath: "/var/atlassian/application-data/jira"
-            name: nfs
+            name: {{ volume }}
       volumes:
-      - name: nfs
+      - name: {{ volume }}
         persistentVolumeClaim:
-          claimName: nfsprodjira
+          claimName: {{ volumeclaim }}

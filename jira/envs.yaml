@@ -1,0 +1,13 @@
+namespace='test'
+xmx='1536m'
+xms='1536m'
+proxyname='jira.pandanet.xyz'
+httpsscheme='https'
+secureconnector="true"
+volume='nfsjira'
+volumeclaim='nfsjira'
+nodeip1='10.1.1.24'
+nodeip2='10.1.1.25'
+nfsipaddress='10.1.1.22'
+nfspath="/root/nfs/jira_prod"
+
