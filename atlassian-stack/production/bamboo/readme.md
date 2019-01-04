@@ -78,7 +78,11 @@ This guide relies on NFS volumes and static node-port type load balancers. These
 * tomcat properties are set with the following values in the envs.yaml
 
 ```PROXYNAME```
+
+
 ```PROXYSCHEME```
+
+
 ```PROXYSECURE```
 
 
