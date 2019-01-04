@@ -25,6 +25,12 @@ spec:
               value: {{jvmlow}}
             - name: JVM_MAXIMUM_MEMORY
               value: {{jvmhigh}}
+            - name: PROXYNAME
+              value: {{proxyname}}
+            - name: PROXYSCHEME
+              value: {{proxyscheme}}
+            - name: PROXYSECURE
+              value: "true"
           ports:
             - containerPort: 8085
           volumeMounts:
