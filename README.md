@@ -35,6 +35,8 @@ You may need to define your kubectl context such as "kubectl apply -f foo.yml --
 
 ```kubectl create -f production/prod_namespace.yml```
 
+```kubectl create ns production```
+
 # Create Volumes
 Create volumes such as the below for each product
 ```kubectl -n production create -f production/bamboo/production_volume_bamboo.yml```

@@ -73,3 +73,19 @@ This guide relies on NFS volumes and static node-port type load balancers. These
 * typically takes the node-port of each node in the k8s cluster
 
 ```10.1.1.25```
+
+##### Topcat properties
+* tomcat properties are set with the following values in the envs.yaml
+
+```PROXYNAME```
+
+
+```PROXYSCHEME```
+
+
+```PROXYSECURE```
+
+
+* Proxy Name is your FQDN in which your reverse proxy/load balancer listens for the service, such as bamboo.company.com
+* Proxy Scheme tells tomcat if this is HTTP or HTTPS
+* Proxy Secure informs tomcat if SSL is in use and allows for better re-writing and security. This value is hard coded into the deployment.yml due to bugs between ansible and go templates not reading this value correctly. If HTTPS, set this to "true", if HTTP, set this to "false"
