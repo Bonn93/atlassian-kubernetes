@@ -87,7 +87,8 @@ FeCru:
 # Tips:
 ## Access the services without ingress using kubectl proxy:
 ```kubectl proxy```
-curl -v http://localhost:${product_port}
+
+```curl -v http://localhost:${product_port}```
 
 
 ## Get deployment:
