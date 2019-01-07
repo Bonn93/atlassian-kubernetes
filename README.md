@@ -85,23 +85,22 @@ FeCru:
 
 
 # Tips:
-Access the services without ingress using kubectl proxy:
+## Access the services without ingress using kubectl proxy:
 ```kubectl proxy```
 curl -v http://localhost:${product_port}
 
 
-Get deployment:
+## Get deployment:
 ```kubectl -n $namespace get deploy/bamboodeployment```
 
 
 
-Get pod and Pod details:
+## Get pod and Pod details:
 ```kubectl -n $namespace get po```
 
 ```kubectl -n $namespace describe po <podname>```
 
 
-
-Container Shell:
+## Container Shell:
 ```kubectl -n $namespace exec -it <podname> /bin/bash```
 
