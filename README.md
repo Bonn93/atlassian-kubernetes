@@ -71,12 +71,12 @@ Note that cluster-dns and networking must be working to ensure pods, nodes and d
 
 
 # Deploy product via Ansible:
-Bamboo: https://github.com/Bonn93/atlassian-kubernetes/blob/master/bamboo/readme.md
-Jira:
-Confluence:
-Bitbucket:
-Crowd:
-FeCru:
+## Bamboo: https://github.com/Bonn93/atlassian-kubernetes/blob/master/bamboo/readme.md
+## Jira:
+## Confluence:
+## Bitbucket:
+## Crowd:
+## FeCru:
 
 # Configure products:
 * After a successful deployment, each application should be available via HTTP internally and externally
