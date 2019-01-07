@@ -22,6 +22,7 @@ You will need:
 This has been tested with:
 * GKE
 * Kubernetes 1.13 on vSphere
+* HAProxy L4 Ingress
 
 ### Understating Persistence in K8s ###
 Unless properly backed by a volume, your data will not persist. Each service has the following;
@@ -53,7 +54,13 @@ I have included a pre-built demo database to support both test, and production d
 * Includes default demo credentials for all products as jira:jira:jira or jira_prod:jira_prod:jira:prod
 * Includes default demo databases for each of the above
 This is only a demo database, this is not a production or secure deployment service!
+
+ ```kubectl -n $namespace create -f database/prod_volume_psql.yml```
+ 
+ ```kubectl -n $namespace create -f database/prod_volume_psql_claim.yml```
+
  ```kubectl -n $namespace create -f database/prod_database.yml```
+ 
 
 # Expose the Postgres Backend Service
 We need to expose the database service internally to the namespace. We do this with a service deployment:
@@ -71,4 +78,25 @@ Bitbucket:
 Crowd:
 FeCru:
 
+# Configure products:
+* After a successful deployment, each application should be available via HTTP internally and externally
+* Configure applications, the database EP is: postgres-atlas.${namespace}:5432
+
+
+
+# Tips:
+Access the services without ingress using kubectl proxy:
+```kubectl proxy```
+curl -v http://localhost:${product_port}
+
+Get deployment:
+```kubectl -n $namespace get deploy/bamboodeployment```
+
+Get pod and Pod details:
+```kubectl -n $namespace get po```
+
+```kubectl -n $namespace describe po <podname>```
+
+Container Shell:
+```kubectl -n $namespace exec -it <podname> /bin/bash```
 
