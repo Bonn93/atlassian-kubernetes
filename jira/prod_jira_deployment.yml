@@ -2,20 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jira-deployment
-  namespace: {{ namespace }}
+  namespace: {{namespace}}
   labels:
-    service: jira
-    app: jira
+    service: {{jiraservicename}}
+    app: {{appname}}
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: jira
+      app: {{appname}}
   template:
     metadata:
       labels:
-        app: jira
+        app: {{appname}}
     spec:
       containers:
         - name: jira
@@ -23,26 +23,26 @@ spec:
           imagePullPolicy: Always
           env:
             - name: JVM_MINIMUM_MEMORY
-              value: {{xms}}
+              value: {{jvmlow}}
               # 1536m
             - name: JVM_MAXIMUM_MEMORY
-              value: {{xmx}}
+              value: {{jvmhigh}}
               # 1536m
             - name: CATALINA_CONNECTOR_PROXYNAME
               value: {{proxyname}}
               # jira.company.com
             - name: CATALINA_CONNECTOR_SCHEME
-              value: {{httpscheme}}
+              value: {{proxyscheme}}
               # https
             - name: CATALINA_CONNECTOR_SECURE
-              value: {{secureconnector}}
+              value: {{proxysecure}}
               # Value = "true
           ports:
             - containerPort: 8080
           volumeMounts:
           - mountPath: "/var/atlassian/application-data/jira"
-            name: {{ volume }}
+            name: {{jiravolume}}
       volumes:
-      - name: {{ volume }}
+      - name: {{jiravolume}}
         persistentVolumeClaim:
-          claimName: {{ volumeclaim }}
+          claimName: {{ jiravolumeclaim }}

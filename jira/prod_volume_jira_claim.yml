@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{volume}}
+  name: {{jiravolumename}}
   namespace: {{namespace}}
 spec:
   accessModes:
@@ -9,4 +9,4 @@ spec:
   storageClassName: ""
   resources:
     requests:
-      storage: 5Gi
+      storage: {{storagesize}}

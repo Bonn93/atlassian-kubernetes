@@ -4,7 +4,7 @@ metadata:
   name: jira
   namespace: {{namespace}}
   labels:
-    app: jira
+    app: {{appname}}
 spec:
   type: LoadBalancer
   externalIPs:
@@ -16,4 +16,4 @@ spec:
     targetPort: 8080
     protocol: TCP
   selector:
-    app: jira
+    app: {{appname}}

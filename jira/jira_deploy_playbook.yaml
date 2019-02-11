@@ -7,11 +7,6 @@
   - name: Create the tmp directory
     file: path=/tmp/k8s/jiradeploy state=directory
 
-  - name: envs
-    include_vars:
-      file: envs.yaml
-      name: envs
-
   - name: Render files template to /jiradeploy
     template: src={{ item }} dest=/tmp/k8s/jiradeploy/{{ item | basename }}
     with_fileglob: "{{playbook_dir}}/*.yml"

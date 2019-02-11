@@ -1,13 +1,19 @@
-namespace='test'
-xmx='1536m'
-xms='1536m'
-proxyname='jira.pandanet.xyz'
-httpsscheme='https'
-secureconnector="true"
-volume='nfsjira'
-volumeclaim='nfsjira'
-nodeip1='10.1.1.24'
-nodeip2='10.1.1.25'
-nfsipaddress='10.1.1.22'
-nfspath="/root/nfs/jira_prod"
+namespace: production
+jiraservicename: jira
+appname: jira
+jvmlow: "1536m"
+jvmhigh: "1536m"
+jiravolume: jirapv
+jiravolumeclaim: jira
+jiravolumename: jira
+storagesize: 5Gi
+nfsserverip: "10.1.1.22"
+nfspath: /root/nfs/jira_prod
+jirak8sservicename: jira-svc
+nodeip1: "10.1.1.30"
+nodeip2: "10.1.1.31"
+proxyname: "jira.company.com"
+proxyscheme: "https"
+# This needs to be set in the deployment.yml due to bugs with encoding this string between ansible and govariables
+#proxysecure: "true"
 
