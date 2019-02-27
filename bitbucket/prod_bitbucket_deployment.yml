@@ -2,20 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bitbucket-deployment
-  namespace: production
+  namespace: {{namespace}}
   labels:
-    service: bitbucket
-    app: bitbucket
+    service: {{bitbucketservicename}}
+    app: {{appname}}
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bitbucket
+      app: {{appname}}
   template:
     metadata:
       labels:
-        app: bitbucket
+        app: {{appname}}
     spec:
       containers:
         - name: bitbucket
@@ -23,15 +23,21 @@ spec:
           imagePullPolicy: Always
           env:
             - name: JVM_MINIMUM_MEMORY
-              value: 1024m
+              value: {{jvmlow}}
             - name: JVM_MAXIMUM_MEMORY
-              value: 1024m
+              value: {{jvmhigh}}
+            - name: PROXYNAME
+              value: {{proxyname}}
+            - name: PROXYSCHEME
+              value: {{proxyscheme}}
+            - name: PROXYSECURE
+              value: "true"
           ports:
             - containerPort: 7990
           volumeMounts:
           - mountPath: "/var/atlassian/application-data/bitbucket"
-            name: nfs
+            name: {{bitbucketvolume}}
       volumes:
-      - name: nfs
+      - name: {{bitbucketvolume}}
         persistentVolumeClaim:
-          claimName: nfsprodbitbucket
+          claimName: {{bitbucketvolumeclaim}}

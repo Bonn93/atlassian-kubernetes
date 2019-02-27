@@ -1,19 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: bitbucket
-  namespace: production
+  name: {{bitbucketk8sservicename}}
+  namespace: {{namespace}}
   labels:
-    app: bitbucket
+    app: {{appname}}
 spec:
   type: LoadBalancer
   externalIPs:
-    - 10.1.1.24
-    - 10.1.1.25
+    - {{nodeip1}}
+    - {{nodeip2}}
   ports:
   - name: http
     port: 7990
     targetPort: 7990
     protocol: TCP
   selector:
-    app: bitbucket
+    app: {{appname}}
