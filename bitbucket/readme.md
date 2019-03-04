@@ -4,26 +4,26 @@
 
 
 # Quick Deploy
-```ansible-playbook ansible-bamboo.yaml -e @envs.yaml```
+```ansible-playbook ansible-bitbucket.yaml -e @envs.yaml```
 
 # Customizing Options
-This guide relies on NFS volumes and static node-port type load balancers. These can be changed. The Bamboo docker container accepts several ENV variables to configure JVM or Tomcat HTTP options. Listed Below:
+This guide relies on NFS volumes and static node-port type load balancers. These can be changed. The Bitbucket docker container accepts several ENV variables to configure JVM or Tomcat HTTP options. Listed Below:
 
 
 ##### Namespace
 * Target K8s Namespace
 
-```devops-bamboo-ns```
+```devops-bitbucket-ns```
 
 ##### Bambooservicename
 * Service label used to gather objects 
 
-```devops-bamboo-service```
+```devops-bitbucket-service```
 
 ##### Appname
 * Name of the application 
 
-```bamboo67```
+```bitbucket```
 
 ##### jvmlow
 * Xms value. Recommended to set the name. Not too big!
@@ -33,20 +33,22 @@ This guide relies on NFS volumes and static node-port type load balancers. These
 ##### jvmhigh
 * Xmx. Set as Above
 
-##### Bamboopv
+##### bitbucketpv
 * Bamboo Persistent Volume used in deployment
 
 ```bamboopv```
+Git & NFS can be a bad mix. This is an example only. A recommended deployment would be to have NFS mounted as hostDirs on each k8s worker node, and using local paths to mount this.
+This will ensure the proper NFS mount settings can be applied such as noatime,sync,posix and W/R sizes. This is a sample only!
 
-##### Bamboovolumeclaim
+##### bitbucketvolumeclaim
 * K8s PVC object to claim the volume
 
-```bamboonnfspvc```
+```bitbucketnnfspvc```
 
-##### Bamboovolumename
+##### bitbucketvolumename
 * Used in Deployment
 
-```bamboo-vol```
+```bitbucket-vol```
 
 ##### Storagesize
 * Capacity in GB for the Bamboo Home 
@@ -61,12 +63,12 @@ This guide relies on NFS volumes and static node-port type load balancers. These
 ##### nfspath
 * NFS Mount Path ( nfs export )
 
-```/data/bamboo-prod/```
+```/data/bitbucket-prod/```
 
 ##### bambook8servicename
 * used with k8s service and ingress controllers
 
-```devops-bamboo-svc```
+```devops-bitbucket-svc```
 
 ##### nodeip1,2
 * Used with local load balancers or node ports to expose services outside without ingress controllers

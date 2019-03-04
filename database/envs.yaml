@@ -1,0 +1,9 @@
+namespace: test
+servicename: postgres-atlas
+appname: postgres-atlas
+volume: postgresatlaspv
+volumeclaim: postgresatlas
+volumename: postgresatlas
+storagesize: 5Gi
+nfsserverip: "10.1.1.22"
+nfspath: /root/nfs/psql_prod

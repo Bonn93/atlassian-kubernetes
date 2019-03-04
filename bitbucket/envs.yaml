@@ -12,7 +12,7 @@ nfspath: /root/nfs/bitbucket_prod
 bitbucketk8sservicename: bamboo-svc
 nodeip1: "10.1.1.30"
 nodeip2: "10.1.1.31"
-proxyname: "bitbucket.pandanet.xyz"
+proxyname: "bitbucket.domain.xyz"
 proxyscheme: "https"
 # This needs to be set in the deployment.yml due to bugs with encoding this string between ansible and govariables
-#proxysecure: "true"
+proxysecure: "true"
