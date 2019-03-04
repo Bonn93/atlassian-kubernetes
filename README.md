@@ -3,12 +3,12 @@ All things Atlassian and Kubernetes!
 
 This repo is to show a general idea on how to deploy the entire Atlassian stack on Kubernetes.
 
-Future releases will be via Helm Charts, Support for DataCenter Versions will come later.
+Future releases will be via Helm Charts, Support for Data Center Versions will come later.
 
 This is not a Production Ready Service. You will need to build your own deployments and use the correct resources.
-* NFSv4 can be problematic, with correct tuning for each workload, this can be a viable option, though NFSv3 is recommended still
+* NFSv4 can be problematic with Git workloads, with correct tuning for each workload, this can be a viable option, though NFSv3 is recommended via HostPaths for performance environments! 
 
-# This is work in progress. Changes are drastic and frequent! 
+# This is work in progress!
 
 ### Getting Started ###
 You will need:
@@ -22,7 +22,7 @@ You will need:
 This has been tested with:
 * GKE
 * Kubernetes 1.13 on vSphere
-* HAProxy L4 Ingress
+* HAProxy L4/L7 Ingress
 
 ### Understating Persistence in K8s ###
 Unless properly backed by a volume, your data will not persist. Each service has the following;
@@ -36,9 +36,7 @@ You can edit the volume.yml files to use any Disk backing supported by K8s, howe
 All the services will live within one namespace, test or production. All services are deployed to this namespaces explicitly.
 You may need to define your kubectl context such as "kubectl apply -f foo.yml --namespace=test" 
 
-```kubectl create -f production/prod_namespace.yml```
-
-```kubectl create ns production```
+```kubectl create ns my-namespace```
 
 # Edit Volumes
 Volumes are created and configured in ${product}/prod_volume*.yml
@@ -48,35 +46,23 @@ Volumes are created and configured in ${product}/prod_volume*.yml
 
 
 # Create an Database Application Deployment
-It's best to deploy the database first, this may be automated in the App setup in the future. But prepare this first.
+Deploy a sample Postgres instance: https://github.com/Bonn93/atlassian-kubernetes/tree/master/database
 
-I have included a pre-built demo database to support both test, and production deployments. This is found here: https://hub.docker.com/r/mbern/postgres-atlas-all/ 
-* Includes default demo credentials for all products as jira:jira:jira or jira_prod:jira_prod:jira:prod
-* Includes default demo databases for each of the above
-This is only a demo database, this is not a production or secure deployment service!
+I've built a quick database to use for this sample deployment found here: https://cloud.docker.com/u/mbern/repository/docker/mbern/postgres-atlas-all
 
- ```kubectl -n $namespace create -f database/prod_volume_psql.yml```
+This has several databases included which can be used with each application deployment below.
+
+Production deployments are still best of using Managed SQL services like Cloud SQL, RDS or real database deployments for sake of sanity and protection. If you understand how databases, docker and kubernetes works, then fire away!
  
- ```kubectl -n $namespace create -f database/prod_volume_psql_claim.yml```
-
- ```kubectl -n $namespace create -f database/prod_database.yml```
- 
-
-# Expose the Postgres Backend Service
-We need to expose the database service internally to the namespace. We do this with a service deployment:
-```kubectl -n $namespace create -f database/prod_database_service_be.yml```
-Postgres should now be available at the following address: postgres-atlas.production:5432
-
-Note that cluster-dns and networking must be working to ensure pods, nodes and deployments can resolve these address spaces.
 
 
 # Deploy product via Ansible:
 ### Bamboo: https://github.com/Bonn93/atlassian-kubernetes/blob/master/bamboo/readme.md
-### Jira:
-### Confluence:
-### Bitbucket:
-### Crowd:
-### FeCru:
+### Jira: Coming Soon!
+### Confluence: Coming Soon!
+### Bitbucket: https://github.com/Bonn93/atlassian-kubernetes/blob/master/bitbucket/readme.md
+### Crowd: Coming Soon!
+### FeCru: Coming Soon!
 
 # Configure products:
 * After a successful deployment, each application should be available via HTTP internally and externally
@@ -105,3 +91,5 @@ Note that cluster-dns and networking must be working to ensure pods, nodes and d
 ### Container Shell:
 ```kubectl -n $namespace exec -it <podname> /bin/bash```
 
+# Data Center Versions:
+Running stateful applications like the above can be tricky with Kubernetes. Whilst we can use stateful sets, the applications here require some advanced setup and tweaks in-order to perform "simple deployments". I'm working on this, but if you have experience with Statefulsets and these products, I'd like to hear from you! 
