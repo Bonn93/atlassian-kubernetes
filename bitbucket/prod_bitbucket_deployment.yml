@@ -26,11 +26,13 @@ spec:
               value: {{jvmlow}}
             - name: JVM_MAXIMUM_MEMORY
               value: {{jvmhigh}}
-            - name: PROXYNAME
+            - name: SERVER_PROXY_PORT
+              value: "443"
+            - name: SERVER_PROXY_NAME
               value: {{proxyname}}
-            - name: PROXYSCHEME
+            - name: SERVER_SCHEME
               value: {{proxyscheme}}
-            - name: PROXYSECURE
+            - name: SERVER_SECURE
               value: "true"
           ports:
             - containerPort: 7990
