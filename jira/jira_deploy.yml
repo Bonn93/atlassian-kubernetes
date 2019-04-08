@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: jirastatefulset
+  namespace: {{namespace}}
+spec:
+  serviceName: {{appname}}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jira8
+  template:
+    metadata:
+      labels:
+        app: jira8
+    spec:
+      terminationGracePeriodSeconds: 300
+      containers:
+        - name: {{appname}}
+          image: dchevell/jira-software:8.0.2
+          ports:
+            - containerPort: 8080
+              name: jiraport
+            - containerPort: 40001
+              name: jiraclusterport
+          env:
+            - name: JVM_MINIMUM_MEMORY
+              value: {{jvmlow}}
+              # 1536m
+            - name: JVM_MAXIMUM_MEMORY
+              value: {{jvmhigh}}
+              # 1536m
+            - name: CATALINA_CONNECTOR_PROXYNAME
+              value: {{proxyname}}
+              # jira.company.com
+            - name: CATALINA_CONNECTOR_SCHEME
+              value: {{proxyscheme}}
+              # https
+            - name: CATALINA_CONNECTOR_SECURE
+              value: "true"
+              # Value = "true
+          volumeMounts:
+            - mountPath: "/var/atlassian/application-data/jira"
+              name: {{jiravolume}}
+      volumes:
+        - name: {{jiravolume}}
+          persistentVolumeClaim:
+            claimName: {{ jiravolumeclaim }}
+---
+### Persistent Volume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: {{namespace}}
+  name: {{jiravolumename}}
+spec:
+  capacity:
+    storage: {{storagesize}}
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: {{nfsserverip}}
+    path: {{nfspath}}
+    #server: 10.1.1.22
+    #path: "/root/nfs/jira_prod"
+---
+### Persistent Volume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{jiravolumename}}
+  namespace: {{namespace}}
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: {{storagesize}}
+---
+### Kubernetes v1 Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: jira
+  namespace: {{namespace}}
+  labels:
+    app: {{appname}}
+spec:
+  type: LoadBalancer
+  externalIPs:
+    - {{nodeip1}}
+    - {{nodeip2}}
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: {{appname}}
