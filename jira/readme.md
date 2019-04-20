@@ -2,6 +2,19 @@
 * .yaml files are ansible, .yml files are k8s manifests
 * envs.yaml contains most key settings used in the deployment
 
+# StatefulSets
+* This deployment uses StatefulSets and is set to 1 replica. You can scale this deployment after the following is completed
+* Main DB, App and Licence is configured @ 1 replica
+* Jira8-0 is online and healthy
+```kubectl scale sts/jira8 --replicas=2```
+
+# Scaling Jira
+* Ensure you meet clustering requirements including a decent amount of CPUs and Memory
+* Ensure to scale the XMX/XMS values
+* Ensure you run on modern hardware
+* 3-4 pods in the statefulset will be optimial, going above this is not recommended
+
+
 
 # Quick Deploy
 ```ansible-playbook jira_deploy.yaml -e @envs.yaml```
@@ -33,17 +46,17 @@ This guide relies on NFS volumes and static node-port type load balancers. These
 ##### jvmhigh
 * Xmx. Set as Above
 
-##### jiraopv
+##### jirapv
 * Jira Persistent Volume used in deployment
 
-```jiraopv```
+```jirapv```
 
-##### Bamboovolumeclaim
+##### Jiravolumeclaim
 * K8s PVC object to claim the volume
 
 ```jiranfspvc```
 
-##### Bamboovolumename
+##### Jiravolumename
 * Used in Deployment
 
 ```jira-vol```
