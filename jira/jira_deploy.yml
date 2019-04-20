@@ -15,14 +15,33 @@ spec:
         app: jira8
     spec:
       terminationGracePeriodSeconds: 300
+      initContainers:
+        - name: jirahomeperms
+          image: busybox
+          command: ["chown", "daemon:daemon", "-R", "/var/atlassian/application-data/jira/"]
+          volumeMounts:
+            - mountPath: "/var/atlassian/application-data/jira"
+              name: home
+        - name: jirasharedperms
+          image: busybox
+          command: ["chown", "daemon:daemon", "-R", "/var/atlassian/shared"]
+          volumeMounts:
+            - mountPath: "/var/atlassian/shared"
+              name: shared-home
       containers:
         - name: {{appname}}
           image: dchevell/jira-software:8.0.2
+          securityContext:
+            privileged: true
           ports:
             - containerPort: 8080
               name: jiraport
             - containerPort: 40001
               name: jiraclusterport
+          lifecycle:
+            postStart:
+              exec:
+                command: ["chown", "daemon:daemon", "/var/atlassian/application-data/jira/cluster.properties"]
           env:
             - name: JVM_MINIMUM_MEMORY
               value: {{jvmlow}}
@@ -42,7 +61,7 @@ spec:
             - name: CLUSTERED
               value: "true"
             - name: JIRA_SHARED_HOME
-              value: "/var/atlassian/application-data/jira/shared"
+              value: "/var/atlassian/shared"
             - name: JIRA_NODE_ID
               valueFrom:
                 fieldRef:
@@ -51,18 +70,25 @@ spec:
               value: "40001"
           volumeMounts:
             - mountPath: "/var/atlassian/application-data/jira"
-              name: {{jiravolume}}
+              name: home
+            - mountPath: "/var/atlassian/shared"
+              name: shared-home
             - mountPath: "/var/atlassian/application-data/jira/dbconfig.xml"
               subPath: dbconfig.xml
               name: jira-db-config-volume
+
+
       volumes:
-        - name: {{jiravolume}}
+        - name: home
+          emptyDir:
+            {}
+        - name: shared-home
           persistentVolumeClaim:
-            claimName: {{ jiravolumeclaim }}
+            claimName: jira
         - name: jira-db-config-volume
           configMap:
             name: jira-db-config-volume
-            defaultMode: 0744
+            defaultMode: 0777
 ---
 ### ConfigMap for Database
 apiVersion: v1
@@ -126,10 +152,9 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: ""
   resources:
     requests:
-      storage: {{storagesize}}
+      storage: 5Gi
 ---
 ### Kubernetes v1 Service
 apiVersion: v1
