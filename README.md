@@ -58,7 +58,7 @@ Production deployments are still best of using Managed SQL services like Cloud S
 
 # Deploy product via Ansible:
 ### Bamboo: https://github.com/Bonn93/atlassian-kubernetes/blob/master/bamboo/readme.md
-### Jira: Coming Soon!
+### Jira: https://github.com/Bonn93/atlassian-kubernetes/blob/master/jira/jira_deploy.yml ( Via Statefulset )
 ### Confluence: Coming Soon!
 ### Bitbucket: https://github.com/Bonn93/atlassian-kubernetes/blob/master/bitbucket/readme.md
 ### Crowd: Coming Soon!
