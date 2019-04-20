@@ -3,7 +3,7 @@ All things Atlassian and Kubernetes!
 
 This repo is to show a general idea on how to deploy the entire Atlassian stack on Kubernetes.
 
-Future releases will be via Helm Charts, Support for Data Center Versions will come later.
+Support for Data Center Versions is in progress. Jira Data Center is now managed via a statefulset. Check it out! 
 
 This is not a Production Ready Service. You will need to build your own deployments and use the correct resources.
 * NFSv4 can be problematic with Git workloads, with correct tuning for each workload, this can be a viable option, though NFSv3 is recommended via HostPaths for performance environments! 
