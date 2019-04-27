@@ -1,19 +1,20 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: jira8
+  name: {{appname}}
   namespace: {{namespace}}
 spec:
   serviceName: {{appname}}
   replicas: 1
   selector:
     matchLabels:
-      app: jira8
+      app: {{appname}}
   template:
     metadata:
       labels:
-        app: jira8
+        app: {{appname}}
     spec:
+      subdomain: {{appname}}
       terminationGracePeriodSeconds: 300
       initContainers:
         - name: jirahomeperms
@@ -62,12 +63,31 @@ spec:
               value: "true"
             - name: JIRA_SHARED_HOME
               value: "/var/atlassian/shared"
+            - name: SDOMAIN
+              value: .{{appname}}
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: JIRA_NODE_ID
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: EHCACHE_LISTENER_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             - name: EHCACHE_LISTENER_PORT
               value: "40001"
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /status
+            initialDelaySeconds: 180
+            periodSeconds: 15
+            successThreshold: 2
+            failureThreshold: 2
+            timeoutSeconds: 5
           volumeMounts:
             - mountPath: "/var/atlassian/application-data/jira"
               name: home
@@ -97,7 +117,7 @@ metadata:
   namespace: {{namespace}}
   name: jira-db-config-volume
   labels:
-    app: jira8
+    app: {{appname}}
 data:
   dbconfig.xml: |
     <?xml version="1.0" encoding="UTF-8"?>
@@ -160,7 +180,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: jira
+  name: jira-external
   namespace: {{namespace}}
   labels:
     app: {{appname}}
@@ -176,3 +196,24 @@ spec:
       protocol: TCP
   selector:
     app: {{appname}}
+---
+### Headless service for POD DNS
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{namespace}}
+  name: jira8
+  #labels:
+    #app: {{appname}}
+spec:
+  selector:
+    app: jira8
+  clusterIP: None
+  #clusterIP: None
+  #ports:
+  #  - port: 40001
+  #    name: ehcache
+  #  - port: 8080
+  #    name: jira
+  #selector:
+  #  app: {{appname}}
