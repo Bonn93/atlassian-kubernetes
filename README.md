@@ -1,9 +1,9 @@
-# atlassian-kubernetes
+# Atlassian-Kubernetes
 All things Atlassian and Kubernetes!
 
 This repo is to show a general idea on how to deploy the entire Atlassian stack on Kubernetes.
 
-Future releases will be via Helm Charts, Support for Data Center Versions will come later.
+Support for Data Center Versions is in progress. Jira Data Center is now managed via a statefulset. Check it out! 
 
 This is not a Production Ready Service. You will need to build your own deployments and use the correct resources.
 * NFSv4 can be problematic with Git workloads, with correct tuning for each workload, this can be a viable option, though NFSv3 is recommended via HostPaths for performance environments! 
@@ -54,11 +54,16 @@ This has several databases included which can be used with each application depl
 
 Production deployments are still best of using Managed SQL services like Cloud SQL, RDS or real database deployments for sake of sanity and protection. If you understand how databases, docker and kubernetes works, then fire away!
  
+# Jira Data Center is now working via v1/statefulSets!
+* You must use an external database 
+* You must have an NFS or ReadWriteMany supported PVC ( NFS, GlusterFS etc )
+* The application must be configured and setup prior to scaling the deployment
+More details here: https://github.com/Bonn93/atlassian-kubernetes/blob/master/jira/readme.md
 
 
 # Deploy product via Ansible:
 ### Bamboo: https://github.com/Bonn93/atlassian-kubernetes/blob/master/bamboo/readme.md
-### Jira: https://github.com/Bonn93/atlassian-kubernetes/blob/master/jira/jira_deploy.yml ( Via Statefulset )
+### Jira: https://github.com/Bonn93/atlassian-kubernetes/blob/master/jira/readme.md
 ### Confluence: Coming Soon!
 ### Bitbucket: https://github.com/Bonn93/atlassian-kubernetes/blob/master/bitbucket/readme.md
 ### Crowd: Coming Soon!
