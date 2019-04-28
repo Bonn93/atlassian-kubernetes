@@ -9,10 +9,14 @@
 ```kubectl scale sts/jira8 --replicas=2```
 
 # Scaling Jira
-* Ensure you meet clustering requirements including a decent amount of CPUs and Memory
+* Ensure you meet clustering requirements including a decent amount of CPUs and Memory.
+* Production clusters should have at least 8 CPUs
 * Ensure to scale the XMX/XMS values
 * Ensure you run on modern hardware
 * 3-4 pods in the statefulset will be optimial, going above this is not recommended
+* Increasing the max_connections for the postgres service will be needed to scale the connection pool
+* Increase pool settings in the DBConfig Configmap
+* Ensure you have adequate NFS performance 
 
 
 
@@ -39,7 +43,7 @@ This guide relies on NFS volumes and static node-port type load balancers. These
 ```jira713```
 
 ##### jvmlow
-* Xms value. Recommended to set the name. Not too big!
+* Xms value. Recommended to set the name. Not too big, not too small.
 
 ```1536m```
 
