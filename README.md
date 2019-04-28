@@ -6,7 +6,7 @@ This repo is to show a general idea on how to deploy the entire Atlassian stack 
 Support for Data Center Versions is in progress. Jira Data Center is now managed via a statefulset. Check it out! 
 
 This is not a Production Ready Service. You will need to build your own deployments and use the correct resources.
-* NFSv4 can be problematic with Git workloads, with correct tuning for each workload, this can be a viable option, though NFSv3 is recommended via HostPaths for performance environments! 
+* NFSv4 can be problematic with Git workloads, with correct tuning for each workload, this can be a viable option, though NFSv3 is recommended via HostPaths for performance environments! Please keep this in mind for Bitbucket and Bamboo deploys.
 
 # This is work in progress!
 
@@ -32,6 +32,8 @@ Unless properly backed by a volume, your data will not persist. Each service has
 
 You can edit the volume.yml files to use any Disk backing supported by K8s, however please note that performance items need to be considered. Volumes hosting Git repos especially.
 
+You must deploy a volume supporting "ReadWriteMany" in order to deploy multiple replicas and run "Data Center" versions of these products.  You can leverage NFS outside the cluster, or services such as GlusterFS.
+
 # Create a Namespace
 All the services will live within one namespace, test or production. All services are deployed to this namespaces explicitly.
 You may need to define your kubectl context such as "kubectl apply -f foo.yml --namespace=test" 
@@ -40,7 +42,7 @@ You may need to define your kubectl context such as "kubectl apply -f foo.yml --
 
 # Edit Volumes
 Volumes are created and configured in ${product}/prod_volume*.yml
-* Samples used a NFS Server
+* Samples use a NFS Server
 * Most settings are part of ${product}/envs.yaml
 * Adjust these volumes to suit your needs
 
@@ -53,6 +55,8 @@ I've built a quick database to use for this sample deployment found here: https:
 This has several databases included which can be used with each application deployment below.
 
 Production deployments are still best of using Managed SQL services like Cloud SQL, RDS or real database deployments for sake of sanity and protection. If you understand how databases, docker and kubernetes works, then fire away!
+
+You may need to increase the max_connections on this deployment later on to scale each statefulset. This can be done by editing the postgres.conf on the NFS volume backing it, delete the pod and let the replicaset recreate a new pod for this service. 
  
 # Jira Data Center is now working via v1/statefulSets!
 * You must use an external database 
