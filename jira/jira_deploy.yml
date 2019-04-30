@@ -32,8 +32,8 @@ spec:
       containers:
         - name: {{appname}}
           image: dchevell/jira-software:8.0.2
-          securityContext:
-            privileged: true
+          #securityContext:
+          #  privileged: true
           ports:
             - containerPort: 8080
               name: jiraport
