@@ -94,11 +94,27 @@ More details here: https://github.com/Bonn93/atlassian-kubernetes/blob/master/ji
 
 ```kubectl -n $namespace get sts```
 
+```kubectl -n $namespace describe sts/$my-sts```
+
+```kubectl -n $namespace describe deploy/$my-deploy```
+
 ### Get pod and Pod details:
 ```kubectl -n $namespace get po```
 
 ```kubectl -n $namespace describe po <podname>```
 
+### Volumes & Config Maps
+```kubectl -n test get pv```
+
+```kubectl -n test get pvc```
+
+```kubectl -n test get configmap```
+
+```kubectl -n test descibe pv/$my-pv```
+
+```kubectl -n test descibe pvc/$my-pvc```
+
+```kubectl -n test descibe configmap/$my-configmap```
 
 ### Container Shell:
 ```kubectl -n $namespace exec -it <podname> /bin/bash```
