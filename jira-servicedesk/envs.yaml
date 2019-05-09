@@ -1,0 +1,24 @@
+namespace: test
+jiraservicename: jira-servicedesk
+appname: jira-servicedesk
+jvmlow: "1536m"
+jvmhigh: "1536m"
+jiravolume: jirasdpv
+jiravolumeclaim: jirasd
+jiravolumename: jirasd
+storagesize: 5Gi
+nfsserverip: "10.1.1.22"
+nfspath: /root/nfs/jirasd_prod
+jirak8sservicename: jirasd-svc
+nodeip1: "10.1.1.30"
+nodeip2: "10.1.1.31"
+proxyname: "helpdesk.pandanet.xyz"
+proxyscheme: "https"
+postgresserver: postgres-atlas
+databasename: jirasd
+databaseport: 5432
+dbuser: jirasd_prod
+dbpass: jirasd_prod
+# This needs to be set in the deployment.yml due to bugs with encoding this string between ansible and govariables
+#proxysecure: true
+

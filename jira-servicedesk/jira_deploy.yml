@@ -1,0 +1,208 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{appname}}
+  namespace: {{namespace}}
+spec:
+  serviceName: {{appname}}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{appname}}
+  template:
+    metadata:
+      labels:
+        app: {{appname}}
+    spec:
+      subdomain: {{appname}}
+      terminationGracePeriodSeconds: 300
+      initContainers:
+        - name: jirahomeperms
+          image: busybox
+          command: ["chown", "daemon:daemon", "-R", "/var/atlassian/application-data/jira/"]
+          volumeMounts:
+            - mountPath: "/var/atlassian/application-data/jira"
+              name: home
+        - name: jirasharedperms
+          image: busybox
+          command: ["chown", "daemon:daemon", "-R", "/var/atlassian/shared"]
+          volumeMounts:
+            - mountPath: "/var/atlassian/shared"
+              name: shared-home
+      containers:
+        - name: {{appname}}
+          image: dchevell/jira-servicedesk:4.1.0
+          ports:
+            - containerPort: 8080
+              name: jiraport
+            - containerPort: 40001
+              name: jiraclusterport
+          lifecycle:
+            postStart:
+              exec:
+                command: ["chown", "daemon:daemon", "/var/atlassian/application-data/jira/cluster.properties"]
+          env:
+            - name: JVM_MINIMUM_MEMORY
+              value: {{jvmlow}}
+              # 1536m
+            - name: JVM_MAXIMUM_MEMORY
+              value: {{jvmhigh}}
+              # 1536m
+            - name: CATALINA_CONNECTOR_PROXYNAME
+              value: {{proxyname}}
+              # jira.company.com
+            - name: CATALINA_CONNECTOR_SCHEME
+              value: {{proxyscheme}}
+              # https
+            - name: CATALINA_CONNECTOR_SECURE
+              value: "true"
+              # Value = "true
+            - name: CLUSTERED
+              value: "true"
+            - name: JIRA_SHARED_HOME
+              value: "/var/atlassian/shared"
+            - name: SDOMAIN
+              value: .{{appname}}
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: JIRA_NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: EHCACHE_LISTENER_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: EHCACHE_LISTENER_PORT
+              value: "40001"
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /status
+            initialDelaySeconds: 180
+            periodSeconds: 15
+            successThreshold: 2
+            failureThreshold: 2
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: "/var/atlassian/application-data/jira"
+              name: home
+            - mountPath: "/var/atlassian/shared"
+              name: shared-home
+            - mountPath: "/var/atlassian/application-data/jira/dbconfig.xml"
+              subPath: dbconfig.xml
+              name: jira-db-config-volume
+
+
+      volumes:
+        - name: home
+          emptyDir:
+            {}
+        - name: shared-home
+          persistentVolumeClaim:
+            claimName: jira
+        - name: jira-db-config-volume
+          configMap:
+            name: jira-db-config-volume
+            defaultMode: 0777
+---
+### ConfigMap for Database
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{namespace}}
+  name: jira-db-config-volume
+  labels:
+    app: {{appname}}
+data:
+  dbconfig.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+
+    <jira-database-config>
+      <name>defaultDS</name>
+      <delegator-name>default</delegator-name>
+      <database-type>postgres72</database-type>
+      <schema-name>public</schema-name>
+      <jdbc-datasource>
+        <url>jdbc:postgresql://{{postgresserver}}.{{namespace}}:5432/{{databasename}}</url>
+        <driver-class>org.postgresql.Driver</driver-class>
+        <username>{{dbuser}}</username>
+        <password>{{dbpass}}</password>
+        <pool-min-size>75</pool-min-size>
+        <pool-max-size>100</pool-max-size>
+        <pool-max-wait>30000</pool-max-wait>
+        <validation-query>select 1</validation-query>
+        <min-evictable-idle-time-millis>60000</min-evictable-idle-time-millis>
+        <time-between-eviction-runs-millis>300000</time-between-eviction-runs-millis>
+        <pool-max-idle>50</pool-max-idle>
+        <pool-remove-abandoned>true</pool-remove-abandoned>
+        <pool-remove-abandoned-timeout>300</pool-remove-abandoned-timeout>
+        <pool-test-on-borrow>false</pool-test-on-borrow>
+        <pool-test-while-idle>true</pool-test-while-idle>
+      </jdbc-datasource>
+    </jira-database-config>
+---
+### Persistent Volume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: {{namespace}}
+  name: {{jiravolumename}}
+spec:
+  capacity:
+    storage: {{storagesize}}
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: {{nfsserverip}}
+    path: {{nfspath}}
+---
+### Persistent Volume Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{jiravolumename}}
+  namespace: {{namespace}}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+---
+### Kubernetes v1 Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: jira-external
+  namespace: {{namespace}}
+  labels:
+    app: {{appname}}
+spec:
+  type: LoadBalancer
+  externalIPs:
+    - {{nodeip1}}
+    - {{nodeip2}}
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  sessionAffinity: ClientIP
+  selector:
+    app: {{appname}}
+---
+### Headless service for POD DNS
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{namespace}}
+  name: jira8
+  #labels:
+    #app: {{appname}}
+spec:
+  selector:
+    app: jira8
+  clusterIP: None
