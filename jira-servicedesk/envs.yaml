@@ -17,8 +17,8 @@ proxyscheme: "https"
 postgresserver: postgres-atlas
 databasename: jirasd
 databaseport: 5432
-dbuser: jirasd_prod
-dbpass: jirasd_prod
+dbuser: jirasd
+dbpass: jirasd
 # This needs to be set in the deployment.yml due to bugs with encoding this string between ansible and govariables
 #proxysecure: true
 
