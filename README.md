@@ -7,6 +7,15 @@ Support for Data Center Versions is in progress. Jira Data Center is now managed
 
 This is not a Production Ready Service. You will need to build your own deployments and use the correct resources.
 * NFSv4 can be problematic with Git workloads, with correct tuning for each workload, this can be a viable option, though NFSv3 is recommended via HostPaths for performance environments! Please keep this in mind for Bitbucket and Bamboo deploys.
+* Upgrades are untested. Jira does support ZDU though
+
+# Atlassian Software
+More details on this software can be found here: https://www.atlassian.com/enterprise/data-center and Trial and Eval licences can be generated at: https://my.atlassian.com
+
+# Docker Images
+This deployment uses two containers. Offical Atlassian at https://hub.docker.com/u/atlassian/ and dchevell's images: https://hub.docker.com/u/dchevell
+
+* Please note not all images are supported by Atlassian in production or Data Center deployments.
 
 # This is work in progress!
 
@@ -16,8 +25,8 @@ You will need:
 * Ansible
 * A Valid kubectl config file & Context (~/home/.kube )
 * At least 16GB~ of Memory in the Cluster
-* NFS Volumes or Persistent Disk Backing (https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes)
-* A Node IP or Elastic IP (GKE) to expose the services outside the cluster
+* NFS Volumes or Persistent Disk Backing (https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes) that supports ReadWriteMany for Data Center
+* A Node IP or Elastic IP (GKE) to expose the services outside the cluster or Ingress
 
 This has been tested with:
 * GKE
@@ -75,30 +84,40 @@ More details here: https://github.com/Bonn93/atlassian-kubernetes/blob/master/ji
 
 # Configure products:
 * After a successful deployment, each application should be available via HTTP internally and externally
-* Configure applications, the database EP is: postgres-atlas.${namespace}:5432
+* Configure applications, such as database, language, themes and license 
 
 
 
 # Tips:
-### Access the services without ingress using kubectl proxy:
-```kubectl proxy```
+### Get deployments & statefulsets:
+```kubectl -n $namespace get deploy```
 
-```curl -v http://localhost:${product_port}```
+```kubectl -n $namespace get sts```
 
+```kubectl -n $namespace describe sts/$my-sts```
 
-### Get deployment:
-```kubectl -n $namespace get deploy/bamboodeployment```
-
-
+```kubectl -n $namespace describe deploy/$my-deploy```
 
 ### Get pod and Pod details:
 ```kubectl -n $namespace get po```
 
 ```kubectl -n $namespace describe po <podname>```
 
+### Volumes & Config Maps
+```kubectl -n test get pv```
+
+```kubectl -n test get pvc```
+
+```kubectl -n test get configmap```
+
+```kubectl -n test descibe pv/$my-pv```
+
+```kubectl -n test descibe pvc/$my-pvc```
+
+```kubectl -n test descibe configmap/$my-configmap```
 
 ### Container Shell:
 ```kubectl -n $namespace exec -it <podname> /bin/bash```
 
 # Data Center Versions:
-Running stateful applications like the above can be tricky with Kubernetes. Whilst we can use stateful sets, the applications here require some advanced setup and tweaks in-order to perform "simple deployments". I'm working on this, but if you have experience with Statefulsets and these products, I'd like to hear from you! 
+This is currently in progress as the most valuable part of this project. Jira DC is now working and seems mostly stable. Work has started for Confluence and Bitbucket.
