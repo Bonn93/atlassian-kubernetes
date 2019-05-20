@@ -31,9 +31,7 @@ spec:
               name: shared-home
       containers:
         - name: {{appname}}
-          image: dchevell/jira-software:8.0.2
-          #securityContext:
-          #  privileged: true
+          image: dchevell/jira-servicedesk:4.1.0
           ports:
             - containerPort: 8080
               name: jiraport
@@ -95,8 +93,7 @@ spec:
               name: shared-home
             - mountPath: "/var/atlassian/application-data/jira/dbconfig.xml"
               subPath: dbconfig.xml
-              name: jira-db-config-volume
-
+              name: jsd-db-config-volume
 
       volumes:
         - name: home
@@ -105,17 +102,18 @@ spec:
         - name: shared-home
           persistentVolumeClaim:
             claimName: jira
-        - name: jira-db-config-volume
+        - name: jsd-db-config-volume
           configMap:
-            name: jira-db-config-volume
+            name: jsd-db-config-volume
             defaultMode: 0777
+
 ---
 ### ConfigMap for Database
 apiVersion: v1
 kind: ConfigMap
 metadata:
   namespace: {{namespace}}
-  name: jira-db-config-volume
+  name: jsd-db-config-volume
   labels:
     app: {{appname}}
 data:
@@ -160,8 +158,6 @@ spec:
   nfs:
     server: {{nfsserverip}}
     path: {{nfspath}}
-    #server: 10.1.1.22
-    #path: "/root/nfs/jira_prod"
 ---
 ### Persistent Volume Claim
 apiVersion: v1
@@ -180,7 +176,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: jira-external
+  name: jsd-external
   namespace: {{namespace}}
   labels:
     app: {{appname}}
@@ -191,7 +187,7 @@ spec:
     - {{nodeip2}}
   ports:
     - name: http
-      port: 8080
+      port: 8081
       targetPort: 8080
       protocol: TCP
   sessionAffinity: ClientIP
@@ -203,18 +199,8 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: {{namespace}}
-  name: jira8
-  #labels:
-    #app: {{appname}}
+  name: {{appname}}
 spec:
   selector:
-    app: jira8
+    app: {{appname}}
   clusterIP: None
-  #clusterIP: None
-  #ports:
-  #  - port: 40001
-  #    name: ehcache
-  #  - port: 8080
-  #    name: jira
-  #selector:
-  #  app: {{appname}}

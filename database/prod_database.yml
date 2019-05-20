@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: {{servicename}}
-          image: mbern/postgres-atlas-all
+          image: mbern/postgres-atlas-all:latest
           ports:
             - containerPort: 5432
           volumeMounts:
