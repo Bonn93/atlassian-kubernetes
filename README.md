@@ -76,7 +76,8 @@ More details here: https://github.com/Bonn93/atlassian-kubernetes/blob/master/ji
 
 # Deploy product via Ansible:
 ### Bamboo: https://github.com/Bonn93/atlassian-kubernetes/blob/master/bamboo/readme.md
-### Jira: https://github.com/Bonn93/atlassian-kubernetes/blob/master/jira/readme.md
+### Jira Data Center: https://github.com/Bonn93/atlassian-kubernetes/blob/master/jira/readme.md
+### Jira Service Desk Data Center: https://github.com/Bonn93/atlassian-kubernetes/blob/master/jira-servicedesk/readme.md
 ### Confluence: Coming Soon!
 ### Bitbucket: https://github.com/Bonn93/atlassian-kubernetes/blob/master/bitbucket/readme.md
 ### Crowd: Coming Soon!
@@ -86,6 +87,8 @@ More details here: https://github.com/Bonn93/atlassian-kubernetes/blob/master/ji
 * After a successful deployment, each application should be available via HTTP internally and externally
 * Configure applications, such as database, language, themes and license 
 
+# Exposing services
+I included service's for each application, exposing this is dependent on your setup such as GKE + LBs or using an Ingress controller. Consult the documentation for these methods or your cluster admins. 
 
 
 # Tips:
