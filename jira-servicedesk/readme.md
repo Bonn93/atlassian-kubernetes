@@ -5,8 +5,8 @@
 # StatefulSets
 * This deployment uses StatefulSets and is set to 1 replica. You can scale this deployment after the following is completed
 * Main DB, App and Licence is configured @ 1 replica
-* Jira8-0 is online and healthy
-```kubectl scale sts/jira8 --replicas=2```
+* JSD-0 is online and healthy
+```kubectl scale sts/jira-servicedesk --replicas=2```
 
 # Scaling Jira
 * Ensure you meet clustering requirements including a decent amount of CPUs and Memory.
@@ -21,7 +21,7 @@
 
 
 # Quick Deploy
-```ansible-playbook jira_deploy.yaml -e @envs.yaml```
+```ansible-playbook jira_deploy_playbook.yaml -e @envs.yaml```
 
 # Customizing Options
 This guide relies on NFS volumes and static node-port type load balancers. These can be changed. The Jira docker container accepts several ENV variables to configure JVM or Tomcat HTTP options. Listed Below:
@@ -78,12 +78,12 @@ This guide relies on NFS volumes and static node-port type load balancers. These
 ##### nfspath
 * NFS Mount Path ( nfs export )
 
-```/data/jira-prod/```
+```/data/jirasd-prod/```
 
 ##### jirak8servicename
 * used with k8s service and ingress controllers
 
-```jira-svc```
+```jirasd-svc```
 
 ##### nodeip1,2
 * Used with local load balancers or node ports to expose services outside without ingress controllers
@@ -106,3 +106,6 @@ This guide relies on NFS volumes and static node-port type load balancers. These
 * Proxy Name is your FQDN in which your reverse proxy/load balancer listens for the service, such as bamboo.company.com
 * Proxy Scheme tells tomcat if this is HTTP or HTTPS
 * Proxy Secure informs tomcat if SSL is in use and allows for better re-writing and security. This value is hard coded into the deployment.yml due to bugs between ansible and go templates not reading this value correctly. If HTTPS, set this to "true", if HTTP, set this to "false"
+
+##### Additional Notes 
+This deployment changes the service port for JSD from 8080 to 8081.

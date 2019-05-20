@@ -93,8 +93,7 @@ spec:
               name: shared-home
             - mountPath: "/var/atlassian/application-data/jira/dbconfig.xml"
               subPath: dbconfig.xml
-              name: jira-db-config-volume
-
+              name: jsd-db-config-volume
 
       volumes:
         - name: home
@@ -103,17 +102,18 @@ spec:
         - name: shared-home
           persistentVolumeClaim:
             claimName: jira
-        - name: jira-db-config-volume
+        - name: jsd-db-config-volume
           configMap:
-            name: jira-db-config-volume
+            name: jsd-db-config-volume
             defaultMode: 0777
+
 ---
 ### ConfigMap for Database
 apiVersion: v1
 kind: ConfigMap
 metadata:
   namespace: {{namespace}}
-  name: jira-db-config-volume
+  name: jsd-db-config-volume
   labels:
     app: {{appname}}
 data:
@@ -176,7 +176,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: jira-external
+  name: jsd-external
   namespace: {{namespace}}
   labels:
     app: {{appname}}
@@ -187,7 +187,7 @@ spec:
     - {{nodeip2}}
   ports:
     - name: http
-      port: 8080
+      port: 8081
       targetPort: 8080
       protocol: TCP
   sessionAffinity: ClientIP
@@ -199,10 +199,8 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: {{namespace}}
-  name: jira8
-  #labels:
-    #app: {{appname}}
+  name: {{appname}}
 spec:
   selector:
-    app: jira8
+    app: {{appname}}
   clusterIP: None
