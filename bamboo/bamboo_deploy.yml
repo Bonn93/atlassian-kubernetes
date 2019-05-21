@@ -1,7 +1,7 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: bamboodeployment
+  name: {{appname}}
   namespace: {{namespace}}
   labels:
     service: {{bambooservicename}}
@@ -40,3 +40,50 @@ spec:
       - name: {{bamboovolume}}
         persistentVolumeClaim:
           claimName: {{bamboovolumeclaim}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{bambook8sservicename}}
+  namespace: {{namespace}}
+  labels:
+    app: {{appname}}
+spec:
+  type:
+  externalIPs:
+  - {{ nodeip1 }}
+  - {{ nodeip2 }}
+  ports:
+  - name: http
+    port: 8085
+    targetPort: 8085
+    protocol: TCP
+  selector:
+    app: {{appname}}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: {{namespace}}
+  name: {{bamboovolumename}}
+spec:
+  capacity:
+    storage: {{storagesize}}
+  accessModes:
+  - ReadWriteMany
+  nfs:
+    server: {{nfsserverip}}
+    path: {{nfspath}}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{bamboovolumename}}
+  namespace: {{namespace}}
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: {{storagesize}}

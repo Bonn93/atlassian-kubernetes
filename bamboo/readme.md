@@ -4,7 +4,7 @@
 
 
 # Quick Deploy
-```ansible-playbook ansible-bamboo.yaml -e @envs.yaml```
+```ansible-playbook bamboo_deploy_playbook.yaml -e @envs.yaml```
 
 # Customizing Options
 This guide relies on NFS volumes and static node-port type load balancers. These can be changed. The Bamboo docker container accepts several ENV variables to configure JVM or Tomcat HTTP options. Listed Below:
