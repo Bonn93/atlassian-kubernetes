@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: bamboo
-          image: dchevell/bamboo:latest
+          image: atlassian/bamboo-server:6.8.1
           imagePullPolicy: Always
           env:
             - name: JVM_MINIMUM_MEMORY
