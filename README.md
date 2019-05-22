@@ -125,3 +125,7 @@ I included service's for each application, exposing this is dependent on your se
 
 # Data Center Versions:
 This is currently in progress as the most valuable part of this project. Jira DC and JSDDC is now working and seems mostly stable. Work has started for Confluence and Bitbucket.
+
+# Additional Notes:
+* Containers run as daemon, there is not root involved
+* Hazelcast ( clustering on Bitbucket and Confluence ) does not have native support for k8s or discovery, multi-cast is also not supported due to networks not supporting this
