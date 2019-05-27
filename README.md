@@ -34,6 +34,11 @@ This has been tested with:
 * Kubernetes 1.13 on vSphere
 * HAProxy L4/L7 Ingress
 
+### High Level Architecture:
+These deployments take the simplest approach to deploy Atlassian software to k8s. Here's a quick ![diagram](atlassian-kubernetes.png) to help understand how you can best apply it for you infrastructure. Generally, this means:
+* BYO Database
+* BYO Shared Storage
+
 ### Understating Persistence in K8s ###
 Unless properly backed by a volume, your data will not persist. Each service has the following;
 * K8S Volume
