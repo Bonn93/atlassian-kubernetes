@@ -35,7 +35,7 @@ This has been tested with:
 * HAProxy L4/L7 Ingress
 
 ### High Level Architecture:
-These deployments take the simplest approach to deploy Atlassian software to k8s. Here's a quick ![diagram](atlassian-kubernetes.png) to help understand how you can best apply it for you infrastructure. Generally, this means:
+These deployments take the simplest approach to deploy Atlassian software to k8s. Here's a quick [diagram](https://imgur.com/a/XJiE2jN) to help understand how you can best apply it for you infrastructure. Generally, this means:
 * BYO Database
 * BYO Shared Storage
 
