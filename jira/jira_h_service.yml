@@ -1,0 +1,11 @@
+---
+### Headless service for POD DNS
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{namespace}}
+  name: jira8
+spec:
+  selector:
+    app: jira8
+  clusterIP: None

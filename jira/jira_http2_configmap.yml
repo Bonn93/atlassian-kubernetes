@@ -1,0 +1,126 @@
+---
+### EXPERIMENTAL HTTP2 CONNECTOR
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: {{namespace}}
+  name: jira-tomcat-xml
+  labels:
+    app: {{appname}}
+data:
+  server.xml: |
+    <?xml version="1.0" encoding="utf-8"?>
+    <!--
+      Licensed to the Apache Software Foundation (ASF) under one or more
+      contributor license agreements.  See the NOTICE file distributed with
+      this work for additional information regarding copyright ownership.
+      The ASF licenses this file to You under the Apache License, Version 2.0
+      (the "License"); you may not use this file except in compliance with
+      the License.  You may obtain a copy of the License at
+ 
+          http://www.apache.org/licenses/LICENSE-2.0
+ 
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+    -->
+    <Server port="8005" shutdown="SHUTDOWN">
+        <Listener className="org.apache.catalina.startup.VersionLoggerListener"/>
+        <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on"/>
+        <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener"/>
+        <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
+        <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener"/>
+ 
+        <Service name="Catalina">
+            <!--
+             ==============================================================================================================
+             DEFAULT - Direct connector with no proxy for unproxied access to Jira.
+ 
+             If using a http/https proxy, comment out this connector.
+             ==============================================================================================================
+            -->
+            <!-- Relaxing chars because of JRASERVER-67974 -->
+            <Connector port="8080" secure="${catalinaConnectorSecure}" scheme="${catalinaConnectorScheme}" proxyName="${catalinaConnectorProxyName}" proxyPort="${catalinaConnectorProxyPort}" relaxedPathChars="[]|" relaxedQueryChars="[]|{}^&#x5c;&#x60;&quot;&lt;&gt;"
+                       maxThreads="150" minSpareThreads="25" connectionTimeout="20000" enableLookups="false"
+                       maxHttpHeaderSize="8192" protocol="HTTP/1.1" useBodyEncodingForURI="true" redirectPort="8443"
+                       acceptCount="100" disableUploadTimeout="true" bindOnInit="false"/>
+ 
+            <!--
+             ==============================================================================================================
+             HTTP - Proxying Jira via Apache or Nginx over HTTP
+ 
+             If you're proxying traffic to Jira over HTTP, uncomment the below connector and comment out the others.
+             Ensure the proxyName and proxyPort are updated with the appropriate information if necessary as per the docs.
+ 
+             See the following for more information:
+ 
+                Apache - https://confluence.atlassian.com/x/4xQLM
+                nginx  - https://confluence.atlassian.com/x/DAFmGQ
+             ==============================================================================================================
+            -->
+ 
+            <!--
+            <Connector port="8080" secure="${catalinaConnectorSecure}" scheme="${catalinaConnectorScheme}" proxyName="${catalinaConnectorProxyName}" proxyPort="${catalinaConnectorProxyPort}" relaxedPathChars="[]|" relaxedQueryChars="[]|{}^&#x5c;&#x60;&quot;&lt;&gt;"
+                       maxThreads="150" minSpareThreads="25" connectionTimeout="20000" enableLookups="false"
+                       maxHttpHeaderSize="8192" protocol="HTTP/1.1" useBodyEncodingForURI="true" redirectPort="8443"
+                       acceptCount="100" disableUploadTimeout="true" bindOnInit="false" scheme="http"
+                       proxyName="<subdomain>.<domain>.com" proxyPort="80"/>
+ 
+            -->
+            <!--
+             ==============================================================================================================
+             HTTPS - Proxying Jira via Apache or Nginx over HTTPS
+ 
+             If you're proxying traffic to Jira over HTTPS, uncomment the below connector and comment out the others.
+             Ensure the proxyName and proxyPort are updated with the appropriate information if necessary as per the docs.
+ 
+             See the following for more information:
+ 
+                Apache - https://confluence.atlassian.com/x/PTT3MQ
+                nginx  - https://confluence.atlassian.com/x/DAFmGQ
+             ==============================================================================================================
+            -->
+ 
+            <!--
+            <Connector port="8080" secure="${catalinaConnectorSecure}" scheme="${catalinaConnectorScheme}" proxyName="${catalinaConnectorProxyName}" proxyPort="${catalinaConnectorProxyPort}" relaxedPathChars="[]|" relaxedQueryChars="[]|{}^&#x5c;&#x60;&quot;&lt;&gt;"
+                       maxThreads="150" minSpareThreads="25" connectionTimeout="20000" enableLookups="false"
+                       maxHttpHeaderSize="8192" protocol="HTTP/1.1" useBodyEncodingForURI="true" redirectPort="8443"
+                       acceptCount="100" disableUploadTimeout="true" bindOnInit="false" secure="true" scheme="https"
+                       proxyName="<subdomain>.<domain>.com" proxyPort="443"/>
+              <UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol"/>
+            -->
+ 
+            <!--
+             ==============================================================================================================
+             AJP - Proxying Jira via Apache over HTTP or HTTPS
+ 
+             If you're proxying traffic to Jira using the AJP protocol, uncomment the following connector line
+             See the following for more information:
+ 
+                Apache - https://confluence.atlassian.com/x/QiJ9MQ
+             ==============================================================================================================
+            -->
+ 
+            <!--
+            <Connector port="8009" URIEncoding="UTF-8" enableLookups="false" protocol="AJP/1.3"/>
+            -->
+ 
+            <Engine name="Catalina" defaultHost="localhost">
+                <Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">
+ 
+                    <Context path="${catalinaContextPath}" docBase="${catalina.home}/atlassian-jira" reloadable="false" useHttpOnly="true">
+                        <Resource name="UserTransaction" auth="Container" type="javax.transaction.UserTransaction"
+                                  factory="org.objectweb.jotm.UserTransactionFactory" jotm.timeout="60"/>
+                        <Manager pathname=""/>
+                        <JarScanner scanManifest="false"/>
+                        <Valve className="org.apache.catalina.valves.StuckThreadDetectionValve" threshold="120" />
+                    </Context>
+ 
+                </Host>
+                <Valve className="org.apache.catalina.valves.AccessLogValve"
+                       pattern="%a %{jira.request.id}r %{jira.request.username}r %t &quot;%m %U%q %H&quot; %s %b %D &quot;%{Referer}i&quot; &quot;%{User-Agent}i&quot; &quot;%{jira.request.assession.id}r&quot;"/>
+            </Engine>
+        </Service>
+    </Server>
