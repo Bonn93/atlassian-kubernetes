@@ -21,6 +21,13 @@ spec:
       containers:
         - name: {{servicename}}
           image: mbern/postgres-atlas-all:latest
+          resources:
+            requests:
+              cpu: {{podcpu}}
+              memory: {{podmemory}}
+            limits:
+              cpu: {{podcpu}}
+              memory: {{podmemory}}
           ports:
             - containerPort: 5432
           volumeMounts:

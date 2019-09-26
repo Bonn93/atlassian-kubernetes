@@ -5,5 +5,7 @@ volume: postgresatlaspv
 volumeclaim: postgresatlas
 volumename: postgresatlas
 storagesize: 5Gi
-nfsserverip: "10.1.1.22"
+nfsserverip: "10.0.0.22"
 nfspath: /root/nfs/psql_prod
+podcpu: "2"
+podmemory: "2Gi"

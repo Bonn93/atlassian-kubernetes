@@ -1,24 +1,26 @@
 namespace: test
 jiraservicename: jira8
 appname: jira8
-jvmlow: "1536m"
-jvmhigh: "1536m"
+jvm: "1536m"
 jiravolume: jirapv
 jiravolumeclaim: jira
 jiravolumename: jira
 storagesize: 5Gi
-nfsserverip: "10.1.1.22"
+nfsserverip: "10.0.0.22"
 nfspath: /root/nfs/jira_prod
 jirak8sservicename: jira-svc
-nodeip1: "10.1.1.30"
-nodeip2: "10.1.1.31"
+nodeip1: "10.0.0.30"
+nodeip2: "10.0.0.31"
 proxyname: "jira.pandanet.xyz"
 proxyscheme: "https"
 postgresserver: postgres-atlas
-databasename: jira
+databasename: jira_prod
 databaseport: 5432
 dbuser: jira_prod
 dbpass: jira_prod
+version: 8.4.1
+podcpu: "2"
+podmemory: "2Gi"
 # This needs to be set in the deployment.yml due to bugs with encoding this string between ansible and govariables
 #proxysecure: true
 
