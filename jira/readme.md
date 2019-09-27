@@ -2,6 +2,15 @@
 * .yaml files are ansible, .yml files are k8s manifests
 * envs.yaml contains most key settings used in the deployment
 
+# Notes:
+This deployment has been updated to use the official Atlassian Jira Software images. There's a few changes included in these from the prior images. As such, the configmaps are not required and do have some problems with how permissions are managed, but using ENVs & secrets is more secure. 
+
+The k8s objects have been split into several files, this helps with troubleshooting as it makes identifcation of failures in each file more apparent. 
+
+A example envs.yml file has been provided, this contains nearly all configurable options and tweaks. Feel free to extend this further by using Ansible {{}} jinja format. 
+
+You should use an IngressController to properly manage sticky sessions and load balance traffic between pods.
+
 # StatefulSets
 * This deployment uses StatefulSets and is set to 1 replica. You can scale this deployment after the following is completed
 * Main DB, App and Licence is configured @ 1 replica
@@ -23,6 +32,13 @@
 # Quick Deploy
 ```ansible-playbook jira_deploy_playbook.yaml -e @envs.yaml```
 
+# ZDU Upgrades
+ZDU is super simple and can be automagically mangaged with simple scripts or using a CI/CD tool.
+1. Use the API to put the cluster into upgrade mode
+2. Perform a rolling upgrade of the containers ( ie 8.4.1 > 8.4.2 ) and let k8s replace each member
+3. Finalise the upgrade in Jira
+4. Done. 
+
 # Customizing Options
 This guide relies on NFS volumes and static node-port type load balancers. These can be changed. The Jira docker container accepts several ENV variables to configure JVM or Tomcat HTTP options. Listed Below:
 
@@ -30,25 +46,25 @@ This guide relies on NFS volumes and static node-port type load balancers. These
 ##### Namespace
 * Target K8s Namespace
 
-```jira-ns```
+```test```
 
 ##### Jiraservicename
 * Service label used to gather objects 
 
-```jira-service```
+```jira8```
 
 ##### Appname
 * Name of the application 
 
-```jira713```
+```jira8```
 
 ##### jvmlow
 * Xms value. Recommended to set the name. Not too big, not too small.
 
-```1536m```
+```2048m```
 
 ##### jvmhigh
-* Xmx. Set as Above
+* Xmx. Set the same as Xms as recommended
 
 ##### jirapv
 * Jira Persistent Volume used in deployment
