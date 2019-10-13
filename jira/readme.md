@@ -11,6 +11,12 @@ A example envs.yml file has been provided, this contains nearly all configurable
 
 You should use an IngressController to properly manage sticky sessions and load balance traffic between pods.
 
+# Mapping custom files
+You may have a custom dbconfig.xml or server.xml requirements. This repo includes basic support to map these files in such as the server.xml for HTTP2 support. Please note that due to how permissions are managed, this may cause start-up failures until bugs are resolved. 
+
+##### HTTP2 Support:
+* HTTP2 support has been added as an example in jira_http2_configmap.yml which adds an upgrade connector ```<UpgradeProtocol className="org.apache.coyote.http2.Http2Protocol"/>``` use this as an example to map objects into the container. You could use this to configure log4j properties too. 
+
 # StatefulSets
 * This deployment uses [StatefulSets](https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/) and is set to 1 replica. You can scale this deployment after the following is completed
 * Main DB, App and Licence is configured @ 1 replica
