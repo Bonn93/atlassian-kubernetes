@@ -86,8 +86,8 @@ GRANT ALL privileges ON DATABASE fecru_prod TO fecru_prod;
 ALTER USER fecru_prod WITH PASSWORD 'fecru_prod';
 
 /* JSD */
-GRANT ALL privileges ON DATANASE jirasd TO jirasd;
+GRANT ALL privileges ON DATABASE jirasd TO jirasd;
 ALTER USER jirasd WITH PASSWORD 'jirasd';
 
-GRANT ALL privileges ON DATANASE jirasd_prod TO jirasd_prod;
+GRANT ALL privileges ON DATABASE jirasd_prod TO jirasd_prod;
 ALTER USER jirasd_prod WITH PASSWORD 'jirasd_prod';
