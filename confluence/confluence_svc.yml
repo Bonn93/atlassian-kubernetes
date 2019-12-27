@@ -1,0 +1,22 @@
+---
+### Kubernetes v1 Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: confluence-external
+  namespace: {{namespace}}
+  labels:
+    app: {{appname}}
+spec:
+  type: LoadBalancer
+  externalIPs:
+    - {{nodeip1}}
+    - {{nodeip2}}
+  ports:
+    - name: http
+      port: 8090
+      targetPort: 8090
+      protocol: TCP
+  sessionAffinity: ClientIP
+  selector:
+    app: {{appname}}

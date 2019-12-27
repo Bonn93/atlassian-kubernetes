@@ -1,0 +1,26 @@
+namespace: test
+confservicename: confluence7
+appname: confluence7
+jvm: "2536m"
+confvolume: confpv
+confvolumeclaim: confluence
+confvolumename: confluence
+storagesize: 5Gi
+nfsserverip: "10.0.0.22"
+nfspath: /root/nfs/confluence
+confk8sservicename: conf-svc
+nodeip1: "10.0.0.30"
+nodeip2: "10.0.0.31"
+proxyname: "test.pandanet.xyz"
+proxyscheme: "https"
+postgresserver: postgres-atlas
+databasename: confluence
+databaseport: 5432
+dbuser: confluence
+dbpass: confluence
+version: 73-eap-0
+podcpu: "3"
+podmemory: "4Gi"
+# This needs to be set in the deployment.yml due to bugs with encoding this string between ansible and govariables
+#proxysecure: true
+

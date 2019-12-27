@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  tasks:
+  - name: Clean up the directory
+    file: path=/tmp/k8s/confdeploy state=absent
+
+  - name: Create the tmp directory
+    file: path=/tmp/k8s/confdeploy state=directory
+
+  - name: Render files template to /confdeploy
+    template: src={{ item }} dest=/tmp/k8s/confdeploy/{{ item | basename }}
+    with_fileglob: "{{playbook_dir}}/*.yml"
+    # You can add extra conditional stuff here, example
+    #when cluster_name in ["cluster1"]
+
+
+  ###############################################################
+
+  - name: Deploy Confluence to K8s Cluster
+    command: kubectl apply -f /tmp/k8s/confdeploy
+
+    # You can add extra conditional stuff here, example
+    #when cluster_name in ["cluster1"]
+
+  - name: Clean up the directory
+    file: path=/tmp/k8s/confdeploy state=absent
+    tags:
+    - cleanup

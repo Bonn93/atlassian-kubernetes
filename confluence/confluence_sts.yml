@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{appname}}
+  namespace: {{namespace}}
+spec:
+  serviceName: {{appname}}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{appname}}
+  template:
+    metadata:
+      labels:
+        app: {{appname}}
+    spec:
+      subdomain: {{appname}}
+      terminationGracePeriodSeconds: 300
+      initContainers:
+        - name: confsharedperms
+          image: busybox
+          command: ["chown", "-R", "2002:2002", "/shared-home"]
+          volumeMounts:
+            - mountPath: "/shared-home"
+              name: conf-shared-home
+      containers:
+        - name: {{appname}}
+          lifecycle:
+            preStop: 
+              exec: 
+                #command: [ "/bin/bash", "-c", "ls -la"]
+                command: [ "/bin/bash", "-c", "tar -zcvf connie.tar.gz -C ../confluence . && cp -fp connie.tar.gz /var/atlassian/application-data/shared-home/nodebackup.tar.gz && touch /var/atlassian/application-data/shared-home/cluster-setup.txt"]
+          image: atlassian/confluence-server:{{version}}
+          resources:
+            requests:
+              cpu: {{podcpu}}
+              memory: {{podmemory}}
+            limits:
+              cpu: {{podcpu}}
+              memory: {{podmemory}}
+          ports:
+            - containerPort: 8090
+              name: confport
+            - containerPort: 8091
+              name: synchrony
+            - containerPort: 5801
+              name: hazelcast
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: KUBERNETES_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: HAZELCAST_KUBERNETES_SERVICE_NAME
+              value: confluence
+            - name: HAZELCAST_KUBERNETES_SERVICE_PORT
+              value: "5701"
+            - name: JVM_SUPPORT_RECOMMENDED_ARGS
+              value: "-Dconfluence.cluster.node.name=$(POD_NAME) \
+                      -Dconfluence.cluster.hazelcast.listenPort=5701"            
+            - name: JVM_MINIMUM_MEMORY
+              value: {{jvm}}
+            - name: JVM_MAXIMUM_MEMORY
+              value: {{jvm}}
+            - name: ATL_PROXY_NAME
+              value: {{proxyname}}
+            - name: ATL_TOMCAT_SCHEME 
+              value: {{proxyscheme}}
+            - name: ATL_TOMCAT_SECURE
+              value: "true"
+            - name: ATL_CLUSTER_NAME
+              value: confluencedc
+            - name: ATL_JDBC_URL
+              value: jdbc:postgresql://{{postgresserver}}.{{namespace}}:5432/{{databasename}}
+            - name: ATL_JDBC_USER
+              value: confluence
+            - name: ATL_JDBC_PASSWORD
+              value: confluence
+            - name: ATL_DB_TYPE
+              value: postgresql
+            - name: ATL_PRODUCT_HOME_SHARED
+              value: "/var/atlassian/application-data/shared-home"
+            - name: ATL_CLUSTER_NAME
+              value: conniek8scluster
+          #readinessProbe:
+          #  httpGet:
+          #    port: 8080
+          #    path: /status
+          #  initialDelaySeconds: 180
+          #  periodSeconds: 15
+          #  successThreshold: 2
+          #  failureThreshold: 2
+          #  timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /var/atlassian/application-data/confluence
+              name: home
+            - mountPath: /var/atlassian/application-data/shared-home
+              name: conf-shared-home
+
+      volumes:
+        - name: home
+          emptyDir:
+            {}
+        - name: conf-shared-home
+          persistentVolumeClaim:
+            claimName: confluence
