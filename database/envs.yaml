@@ -1,5 +1,4 @@
 namespace: test
-servicename: postgres-atlas
 appname: postgres-atlas
 volume: postgresatlaspv
 volumeclaim: postgresatlas

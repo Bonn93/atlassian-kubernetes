@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{servicename}}
+  name: {{appname}}
   namespace: {{namespace}}
   labels:
-    app: {{servicename}}
+    app: {{appname}}
 spec:
   selector:
-    app: {{servicename}}
+    app: {{appname}}
   ports:
   - name: psql
     port: 5432
