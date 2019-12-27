@@ -1,25 +1,21 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   namespace: {{namespace}}
-  name: {{servicename}}
-  labels:
-    service: {{servicename}}
-    app: {{servicename}}
-
-
+  name: {{appname}}
 spec:
+  serviceName: {{appname}}
   replicas: 1
   selector:
     matchLabels:
-      app: {{servicename}}
+      app: {{appname}}
   template:
     metadata:
       labels:
-        app: {{servicename}}
+        app: {{appname}}
     spec:
       containers:
-        - name: {{servicename}}
+        - name: {{appname}}
           image: mbern/postgres-atlas-all:latest
           resources:
             requests:
