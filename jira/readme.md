@@ -26,12 +26,14 @@ You may have a custom dbconfig.xml or server.xml requirements. This repo include
 # Scaling Jira
 * Ensure you meet clustering requirements including a decent amount of CPUs and Memory.
 * Production clusters should have at least 8 CPUs
+* Ensure adequate Pod memory is allocated ( greater than XMX )
 * Ensure to scale the XMX/XMS values
 * Ensure you run on modern hardware
 * 3-4 pods in the statefulset will be optimial, going above this is not recommended
 * Increasing the max_connections for the postgres service will be needed to scale the connection pool
 * Increase pool settings in the DBConfig Configmap
-* Ensure you have adequate NFS performance 
+* Ensure you have adequate NFS performance
+* Run this on large Kube Nodes with modern CPUs
 
 
 
@@ -40,7 +42,7 @@ You may have a custom dbconfig.xml or server.xml requirements. This repo include
 
 # ZDU Upgrades
 ZDU is super simple and can be automagically mangaged with simple scripts or using a CI/CD tool or simple scripts.
-1. Use the API to put the cluster into upgrade mode
+1. Use the [API](https://docs.atlassian.com/software/jira/docs/api/REST/8.5.2/#api/2/cluster/zdu) to put the cluster into upgrade mode
 2. Perform a rolling upgrade of the containers ( ie 8.4.1 > 8.4.2 ) and let k8s replace each member
 3. Finalise the upgrade in Jira
 4. Done. 
