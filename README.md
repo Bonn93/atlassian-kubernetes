@@ -3,11 +3,11 @@ All things [Atlassian](https://atlassian.com) and [Kubernetes](kubernetes.io)!
 
 This repo is to show a general idea on how to deploy the entire Atlassian stack on Kubernetes.
 
-Support for [Data Center Versions](https://www.atlassian.com/enterprise/data-center) is in progress. [Jira Data Center](https://www.atlassian.com/enterprise/data-center/jira) & [Jira Service Desk DC](https://www.atlassian.com/software/jira/service-desk/enterprise/data-center) is now managed via a statefulset. Check it out! 
+Support for [Data Center Versions] is in progess. Jira Software and Service Desk are now deployable and scalable StatefulSets.
 
 This is not a Production Ready Service. You will need to build your own deployments and use the correct resources.
 * NFSv4 can be problematic with Git workloads, with correct tuning for each workload, this can be a viable option, though NFSv3 is recommended via HostPaths for performance environments! Please keep this in mind for Bitbucket and Bamboo deploys.
-* Upgrades are untested. Jira does support ZDU though
+* You need to carefully manage upgrades using ZDU
 
 # Atlassian Software
 More details on this software can be found [here](https://www.atlassian.com/enterprise/data-center) and Trial and Eval licences can be generated [here](https://my.atlassian.com)
@@ -29,9 +29,11 @@ You will need:
 * [NFS Volumes or Persistent Disk Backing](https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes) that supports ReadWriteMany for Data Center
 * A Node IP or Elastic IP (GKE) to expose the services outside the cluster or Ingress Controller
 
+Note! You cannot run local home directories on NFS based volumes. This is only supported for the Shared-Home in DC products.
+
 This has been tested with:
-* GKE
-* Kubernetes 1.13 on vSphere
+* GKE 1.13+
+* Kubernetes 1.15 on vSphere
 * HAProxy L4/L7 Ingress
 
 ### High Level Architecture:
@@ -47,7 +49,7 @@ Unless properly backed by a volume, your data will not persist. Each service has
 
 You can edit the volume.yml files to use any Disk backing supported by K8s, however please note that performance items need to be considered. Volumes hosting Git repos especially.
 
-You must deploy a volume supporting "ReadWriteMany" in order to deploy multiple replicas and run "Data Center" versions of these products.  You can leverage NFS outside the cluster, or services such as GlusterFS.
+You must deploy a volume supporting "ReadWriteMany" in order to deploy multiple replicas and run "Data Center" versions of these products.  You can leverage NFS outside the cluster, or services such as GlusterFS or Ceph, but don't expect local disk performance.
 
 # Create a Namespace
 All the services will live within one namespace, test or production. All services are deployed to this namespaces explicitly.
@@ -56,10 +58,11 @@ You may need to define your kubectl context such as "kubectl apply -f foo.yml --
 ```kubectl create ns my-namespace```
 
 # Edit Volumes
-Volumes are created and configured in ${product}/prod_volume*.yml
+Volumes are created and configured in YAML pv/pvc files.
 * Samples use a NFS Server
 * Most settings are part of ${product}/envs.yaml
 * Adjust these volumes to suit your needs
+* Typically, work with your cluster admins/infrastrucutre teams to provision storage.
 
 
 # Create an Database Application Deployment
@@ -73,7 +76,7 @@ Production deployments are still best of using Managed SQL services like Cloud S
 
 You may need to increase the max_connections on this deployment later on to scale each statefulset. This can be done by editing the postgres.conf on the NFS volume backing it, delete the pod and let the replicaset recreate a new pod for this service. Or tuning your SQL instance.
  
-# Jira Data Center is now working via v1/statefulSets!
+# Jira Software Data Center & Service Desk is now working via v1/statefulSets!
 * You must use an external database 
 * You must have an NFS or ReadWriteMany supported PVC ( NFS, GlusterFS etc )
 * The application must be configured and setup prior to scaling the deployment
@@ -94,7 +97,7 @@ More details [here](https://github.com/Bonn93/atlassian-kubernetes/blob/master/j
 * Configure applications, such as database, language, themes and license 
 
 # Exposing services
-I included service's for each application, exposing this is dependent on your setup such as GKE + LBs or using an Ingress controller. Consult the documentation for these methods or your cluster admins. 
+I included service's for each application, exposing this is dependent on your setup such as GKE + LBs or using an Ingress controller. Consult the documentation for these methods or your cluster admins. You must support sticky sessions/session affinity at these levels via your IngressController
 
 
 # Tips:
@@ -129,8 +132,8 @@ I included service's for each application, exposing this is dependent on your se
 ```kubectl -n $namespace exec -it <podname> /bin/bash```
 
 # Data Center Versions:
-This is currently in progress as the most valuable part of this project. Jira DC and JSDDC is now working and seems mostly stable. Work has started for Confluence and Bitbucket.
+Confluence & BBDC are coming soon.... ;)
 
 # Additional Notes:
-* Containers run as daemon, there is not root involved
-* Hazelcast ( clustering on Bitbucket and Confluence ) does not have native support for k8s or discovery, multi-cast is also not supported due to networks not supporting this
+* Multicast for Hazelcast/EHCache is NOT supported on Overlay or Kubernetes Networks
+* Jira images use an EmptyDir for the JIRA_HOME, this requires ALL data be replicated and pulled via the Database or replication queues. The more data you have, the more stress and load on the cluster. Consider backing the JIRA_HOME via a PersistentDisk( NOT NFS ) and Volume Claim Template to allow for faster scaling/start-up and reduced cluster load. 
