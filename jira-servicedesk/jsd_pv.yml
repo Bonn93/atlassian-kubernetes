@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  namespace: {{namespace}}
+  name: {{jiravolumename}}
+spec:
+  capacity:
+    storage: {{storagesize}}
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: {{nfsserverip}}
+    path: {{nfspath}}

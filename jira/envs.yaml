@@ -1,7 +1,7 @@
 namespace: test
 jiraservicename: jira8
 appname: jira8
-jvm: "1536m"
+jvm: "2048m"
 jiravolume: jirapv
 jiravolumeclaim: jira
 jiravolumename: jira
@@ -18,9 +18,9 @@ databasename: jira_prod
 databaseport: 5432
 dbuser: jira_prod
 dbpass: jira_prod
-version: 8.4.1
-podcpu: "2"
-podmemory: "2Gi"
+version: 8.6.0-jdk11
+podcpu: "3"
+podmemory: "3Gi"
 # This needs to be set in the deployment.yml due to bugs with encoding this string between ansible and govariables
 #proxysecure: true
 
