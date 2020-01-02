@@ -1,0 +1,116 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{appname}}
+  namespace: {{namespace}}
+spec:
+  serviceName: {{appname}}
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{appname}}
+  template:
+    metadata:
+      labels:
+        app: {{appname}}
+    spec:
+      subdomain: {{appname}}
+      terminationGracePeriodSeconds: 300
+      initContainers:
+        - name: jsdhomeperms
+          image: busybox
+          command: ["chown", "2001:2001", "-R", "/var/atlassian/application-data/jira/"]
+          volumeMounts:
+            - mountPath: "/var/atlassian/application-data/jira"
+              name: home
+        - name: jsdsharedperms
+          image: busybox
+          command: ["chown", "-R", "2001:2001", "/var/atlassian/shared"]
+          volumeMounts:
+            - mountPath: "/var/atlassian/shared"
+              name: shared-home
+      containers:
+        - name: {{appname}}
+          image: atlassian/jira-servicedesk:{{version}}
+          ports:
+            - containerPort: 8080
+              name: jiraport
+            - containerPort: 40001
+              name: jiraclusterport
+          env:
+            - name: JVM_MINIMUM_MEMORY
+              value: {{jvm}}
+              # 1536m
+            - name: JVM_MAXIMUM_MEMORY
+              value: {{jvm}}
+              # 1536m
+            - name: CATALINA_CONNECTOR_PROXYNAME
+              value: {{proxyname}}
+              # jira.company.com
+            - name: CATALINA_CONNECTOR_SCHEME
+              value: {{proxyscheme}}
+              # https
+            - name: CATALINA_CONNECTOR_SECURE
+              value: "true"
+              # Value = "true
+            - name: CLUSTERED
+              value: "true"
+            - name: JIRA_SHARED_HOME
+              value: "/var/atlassian/shared"
+            - name: SDOMAIN
+              value: .{{appname}}
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: JIRA_NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: EHCACHE_LISTENER_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: EHCACHE_LISTENER_PORT
+              value: "40001"
+            - name: ATL_JDBC_URL
+              value: jdbc:postgresql://{{postgresserver}}.{{namespace}}:5432/{{databasename}}
+            - name: ATL_JDBC_USER
+              value: jirasd_prod
+            - name: ATL_JDBC_PASSWORD
+              value: jirasd_prod
+            # Above should be secrets to manage credentials securely! 
+            - name: ATL_DB_DRIVER
+              value: org.postgresql.Driver
+            - name: ATL_DB_TYPE
+              value: postgres72
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /status
+            initialDelaySeconds: 180
+            periodSeconds: 15
+            successThreshold: 2
+            failureThreshold: 2
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: "/var/atlassian/application-data/jira"
+              name: home
+            - mountPath: "/var/atlassian/shared"
+              name: shared-home
+            #- mountPath: "/var/atlassian/jira/server.xml"
+            #  subPath: server.xml
+            #  name: jsd-tomcat-volume
+
+      volumes:
+        - name: home
+          emptyDir:
+            {}
+        - name: shared-home
+          persistentVolumeClaim:
+            claimName: jsddata
+        #- name: jsd-tomcat-volume
+        #  configMap:
+        #    name: jsd-tomcat-xml
+        #    defaultMode: 0777
