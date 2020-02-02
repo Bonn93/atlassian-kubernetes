@@ -80,6 +80,8 @@ rm -rf /nfs/jira_prod/*'''
         withKubeConfig(serverUrl: 'https://10.0.0.30:6443', namespace: 'test', credentialsId: 'k8scfg', contextName: 'kubernetes-admin@kubernetes', clusterName: 'kubernetes') {
           sh '''kubectl -n test describe po/jira-0
 '''
+          sh 'kubectl -n test describe sts/jira'
+          sh 'kubectl -n test describe svc/jira'
         }
 
       }
