@@ -81,7 +81,7 @@ rm -rf /nfs/jira_prod/*'''
           sh '''kubectl -n test describe po/jira-0
 '''
           sh 'kubectl -n test describe sts/jira'
-          sh 'kubectl -n test describe svc/jira'
+          sh 'kubectl -n test describe svc/jira8'
         }
 
       }
