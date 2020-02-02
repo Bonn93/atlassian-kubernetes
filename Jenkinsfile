@@ -75,12 +75,13 @@ rm -rf /nfs/jira_prod/*'''
       }
     }
 
-    stage('error') {
+    stage('Get Kube Objects') {
       steps {
         withKubeConfig(serverUrl: 'https://10.0.0.30:6443', namespace: 'test', credentialsId: 'k8scfg', contextName: 'kubernetes-admin@kubernetes', clusterName: 'kubernetes') {
           sh '''kubectl -n test get po
 kubectl -n test get svc
 kubectl -n test get sts
+sleep 40s
 kubectl -n test logs jira-0'''
         }
 
