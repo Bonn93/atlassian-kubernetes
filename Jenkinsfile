@@ -4,7 +4,7 @@ pipeline {
     stage('Deploy Postgres') {
       steps {
         withKubeConfig(clusterName: 'kubernetes', contextName: 'kubernetes-admin@kubernetes', credentialsId: 'k8scfg', namespace: 'test', serverUrl: 'https://10.0.0.30:6443') {
-          sh '''ansible-playbook -v Database/ansible-postgres.yaml \\
+          sh '''ansible-playbook -v database/ansible-postgres.yaml \\
 -e "namespace=test" \\
 -e "appname=postgres-atlas" \\
 -e "volume=postgresatlaspv" \\
