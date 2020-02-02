@@ -11,10 +11,10 @@ pipeline {
 -e "volumeclaim=postgresatlas" \\
 -e "volumename=postgresatlas" \\
 -e "storagesize=5Gi" \\
--e "nfsserverip="10.0.0.22" \\
+-e "nfsserverip=10.0.0.22" \\
 -e "nfspath=/root/nfs/psql_prod" \\
--e "podcpu="2" \\
--e "podmemory="2Gi"'''
+-e "podcpu=2" \\
+-e "podmemory=2Gi"'''
         }
 
       }
