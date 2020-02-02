@@ -63,6 +63,10 @@ rm -rf /nfs/jira_prod/*'''
 -e "proxyname=jira.pandanet.xyz" \\
 -e "proxyscheme=https" \\
 -e "postgresserver=postgres-atlas" \\
+-e "databasename=jira_prod" \\
+-e "databaseport=5432" \\
+-e "dbuser=jira_prod" \\
+-e "dbpass=jira_prod" \\
 -e "version=8.5.3-jdk11" \\
 -e "podcpu=3" \\
 -e "podmemory=3Gi"'''
