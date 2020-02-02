@@ -4,7 +4,8 @@ pipeline {
     stage('Remove existing objects') {
       steps {
         withKubeConfig(clusterName: 'kubernetes', contextName: 'kubernetes-admin@kubernetes', credentialsId: 'k8scfg', namespace: 'test', serverUrl: 'https://10.0.0.30:6443') {
-          sh '''kubectl -n test delete sts/jira
+          sh '''set +e
+kubectl -n test delete sts/jira
 kubectl -n test delete sts/postgres-atlas
 kubectl -n test delete svc/jira'''
         }
@@ -73,7 +74,7 @@ rm -rf /nfs/jira_prod/*'''
       }
     }
 
-    stage('') {
+    stage('error') {
       steps {
         withKubeConfig(serverUrl: 'https://10.0.0.30:6443', namespace: 'test', credentialsId: 'k8scfg', contextName: 'kubernetes-admin@kubernetes', clusterName: 'kubernetes') {
           sh '''kubectl -n test get po
