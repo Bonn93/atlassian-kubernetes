@@ -7,7 +7,8 @@ pipeline {
           sh '''set +e
 kubectl -n test delete sts/jira
 kubectl -n test delete sts/postgres-atlas
-kubectl -n test delete svc/jira'''
+kubectl -n test delete svc/jira
+sleep 1s'''
         }
 
       }
