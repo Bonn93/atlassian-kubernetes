@@ -5,9 +5,7 @@ pipeline {
       steps {
         withKubeConfig(clusterName: 'kubernetes', contextName: 'kubernetes-admin@kubernetes', credentialsId: 'k8scfg', namespace: 'test', serverUrl: 'https://10.0.0.30:6443') {
           sh '''set +e
-kubectl -n test delete sts/jira
-kubectl -n test delete sts/postgres-atlas
-kubectl -n test delete svc/jira
+kubectl -n test delete deploy,sts,configmap,svc,po --all
 sleep 1s'''
         }
 
@@ -60,7 +58,7 @@ rm -rf /nfs/jira_prod/*'''
 -e "jirak8sservicename=jira-svc" \\
 -e "nodeip1=10.0.0.30" \\
 -e "nodeip2=10.0.0.31" \\
--e "proxyname=jira.pandanet.xyz" \\
+-e "proxyname=test.pandanet.xyz" \\
 -e "proxyscheme=https" \\
 -e "postgresserver=postgres-atlas" \\
 -e "databasename=jira_prod" \\
@@ -69,7 +67,8 @@ rm -rf /nfs/jira_prod/*'''
 -e "dbpass=jira_prod" \\
 -e "version=8.5.3-jdk11" \\
 -e "podcpu=3" \\
--e "podmemory=3Gi"'''
+-e "podmemory=3Gi" \\
+-e "svcport=8090"'''
         }
 
       }
