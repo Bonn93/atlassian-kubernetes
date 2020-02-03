@@ -11,7 +11,7 @@ nfspath: /root/nfs/jira_prod
 jirak8sservicename: jira-svc
 nodeip1: "10.0.0.30"
 nodeip2: "10.0.0.31"
-proxyname: "jira.pandanet.xyz"
+proxyname: "test.pandanet.xyz"
 proxyscheme: "https"
 postgresserver: postgres-atlas
 databasename: jira_prod
@@ -21,6 +21,7 @@ dbpass: jira_prod
 version: 8.6.0-jdk11
 podcpu: "3"
 podmemory: "3Gi"
+svcport: "8090"
 # This needs to be set in the deployment.yml due to bugs with encoding this string between ansible and govariables
 #proxysecure: true
 
