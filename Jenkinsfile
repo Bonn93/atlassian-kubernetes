@@ -1,9 +1,9 @@
 pipeline {
   agent any
   stages {
-    stage('') {
+    stage('Autoscale Env post-deploy') {
       steps {
-        sleep 10
+        sh 'curl -u admin:admin https://test.pandanet.xyz/rest/api/2/serverInfo'
       }
     }
 
