@@ -4,7 +4,7 @@ pipeline {
     stage('Autoscale Env post-deploy') {
       steps {
         sh '''curl -V
-curl -u admin:admin https://test.pandanet.xyz/rest/api/2/serverInfo'''
+curl -u --insecure admin:admin https://test.pandanet.xyz/rest/api/2/serverInfo'''
       }
     }
 
