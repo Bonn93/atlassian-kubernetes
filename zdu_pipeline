@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('') {
       steps {
-        sleep 10
+        sh '''curl -u --insecure admin:admin https://test.pandanet.xyz/rest/api/2/serverInfo'''
       }
     }
 
