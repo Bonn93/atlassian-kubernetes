@@ -21,6 +21,7 @@ dbpass: jira_prod
 version: 8.6.0-jdk11
 podcpu: "3"
 podmemory: "3Gi"
+svcport: "8090"
 # This needs to be set in the deployment.yml due to bugs with encoding this string between ansible and govariables
 #proxysecure: true
 

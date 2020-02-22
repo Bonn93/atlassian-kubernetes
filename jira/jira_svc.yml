@@ -11,10 +11,9 @@ spec:
   type: LoadBalancer
   externalIPs:
     - {{nodeip1}}
-    - {{nodeip2}}
   ports:
     - name: http
-      port: 8080
+      port: {{svcport}}
       targetPort: 8080
       protocol: TCP
   sessionAffinity: ClientIP
