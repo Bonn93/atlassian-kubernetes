@@ -1,7 +1,7 @@
 # Atlassian-Kubernetes
 All things [Atlassian](https://atlassian.com) and [Kubernetes](kubernetes.io)!
 
-This repo is to show a general idea on how to deploy the entire Atlassian stack on Kubernetes.
+This repo is to show a general idea on how to deploy Jira, Confluence and Bitbucket DC on Kube.
 
 Support for [Data Center Versions] is in progess. Jira Software and Service Desk are now deployable and scalable StatefulSets.
 
@@ -84,13 +84,10 @@ More details [here](https://github.com/Bonn93/atlassian-kubernetes/blob/master/j
 
 
 # Deploy product via Ansible:
-### [Bamboo](https://github.com/Bonn93/atlassian-kubernetes/blob/master/bamboo/readme.md)
 ### [Jira Data Center](https://github.com/Bonn93/atlassian-kubernetes/blob/master/jira/readme.md)
 ### [Jira Service Desk Data Center](https://github.com/Bonn93/atlassian-kubernetes/blob/master/jira-servicedesk/readme.md)
 ### Confluence: Coming Soon!
 ### [Bitbucket](https://github.com/Bonn93/atlassian-kubernetes/blob/master/bitbucket/readme.md)
-### Crowd: Coming Soon!
-### FeCru: Coming Soon!
 
 # Configure products:
 * After a successful deployment, each application should be available via HTTP internally and externally
