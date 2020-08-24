@@ -10,6 +10,7 @@ steps:
     repo: mbern/postgres-atlas-all
     dockerfile: database/postgres_docker/Dockerfile
     context: ./database/postgres_docker
+    force_tag: true
     auto_tag: true
     tags: latest
     username:
