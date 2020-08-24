@@ -17,6 +17,9 @@ spec:
       containers:
         - name: {{appname}}
           image: mbern/postgres-atlas-all:latest
+          env:
+            - name: POSTGRES_PASSWORD
+              value: test123
           resources:
             requests:
               cpu: {{podcpu}}
