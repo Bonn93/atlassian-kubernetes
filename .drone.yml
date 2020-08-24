@@ -1,0 +1,13 @@
+---
+kind: pipeline
+type: docker
+name: Postgres-Demo 
+
+steps:
+- name: build Postgres
+  image: plugins/docker
+  settings:
+    repo: mbern/postgres-atlas-all
+    auto_tag: true
+    tags: latest
+
