@@ -8,8 +8,8 @@ steps:
   image: plugins/docker
   settings:
     repo: mbern/postgres-atlas-all
-    dockerfile: /database/postgres_docker/Dockerfile
-    context: ./database/postgres_docker
+    dockerfile: database/postgres_docker/Dockerfile
+    context: .
     auto_tag: true
     tags: latest
 
