@@ -12,4 +12,8 @@ steps:
     context: ./database/postgres_docker
     auto_tag: true
     tags: latest
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
 
