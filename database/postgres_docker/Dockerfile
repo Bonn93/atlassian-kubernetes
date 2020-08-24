@@ -1,2 +1,2 @@
-FROM postgres:9.6
+FROM postgres:latest
 COPY schema.sql /docker-entrypoint-initdb.d
