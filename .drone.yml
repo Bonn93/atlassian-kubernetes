@@ -9,7 +9,7 @@ steps:
   settings:
     repo: mbern/postgres-atlas-all
     dockerfile: database/postgres_docker/Dockerfile
-    context: .
+    context: ./database/postgres_docker
     auto_tag: true
     tags: latest
 
